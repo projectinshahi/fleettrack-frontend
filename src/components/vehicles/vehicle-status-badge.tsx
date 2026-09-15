@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  STATUS_CHIP,
+  StatusCue,
+  type StatusTone,
+} from "@/components/ui/status-chip";
+
 interface VehicleStatusBadgeProps {
   status: string;
 }
@@ -7,26 +13,17 @@ interface VehicleStatusBadgeProps {
 export default function VehicleStatusBadge({
   status,
 }: VehicleStatusBadgeProps) {
-  const isMoving = status === "MOVING";
-  const isIdle = status === "IDLE";
+  // Branch order preserved exactly: MOVING, then IDLE, then everything else falls
+  // through to fault. `status` is a plain string here, not an enum, so the else-branch
+  // is the only thing covering OFFLINE and any value the provider has not sent before.
+  const tone: StatusTone =
+    status === "MOVING" ? "ok" : status === "IDLE" ? "attn" : "fault";
 
   return (
     <div
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase border ${
-        isMoving
-          ? "bg-success/10 text-success border-success/15"
-          : isIdle
-            ? "bg-warning/10 text-warning border border-warning/15"
-            : "bg-destructive/10 text-destructive border border-destructive/15"
-      }`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase border ${STATUS_CHIP[tone]}`}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${
-        isMoving
-          ? "bg-success"
-          : isIdle
-            ? "bg-warning"
-            : "bg-destructive"
-      }`} />
+      <StatusCue tone={tone} />
       {status}
     </div>
   );

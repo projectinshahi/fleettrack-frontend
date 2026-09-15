@@ -13,7 +13,7 @@ export default function AuthProvider({
 
   useEffect(() => {
     hydrate();
-  }, []);
+  }, [hydrate]);
 
   return <>{children}</>;
 }

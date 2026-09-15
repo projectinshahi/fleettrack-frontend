@@ -13,11 +13,11 @@ export default function SettingsPage() {
     useState("General");
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-6">
       {/* Header */}
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+        <h1 className="page-title">
           Settings
         </h1>
 

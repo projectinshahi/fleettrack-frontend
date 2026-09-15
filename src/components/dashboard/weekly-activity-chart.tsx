@@ -5,24 +5,45 @@ import {
   AreaChart,
   ResponsiveContainer,
   XAxis,
+  YAxis,
   Tooltip,
   CartesianGrid,
 } from "recharts";
 
 import { useEffect, useState } from "react";
 
-import { weeklyActivity } from "@/data/dashboard-data";
+import { WeeklyActivityDay } from "@/types/trip";
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface WeeklyActivityChartProps {
+  /**
+   * The last 7 days, oldest → newest, already bucketed and zero-filled by the server
+   * (DSH-05). Rendered as-is — a day with no trips is a real 0, not a gap.
+   */
+  days: WeeklyActivityDay[];
+}
+
+// Axis text is chart chrome: recessive, and in a text token rather than the series hue.
+const AXIS_TICK = { fontSize: 12, fill: "var(--muted-foreground)" };
+
+const CustomTooltip = ({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: { label: string }; value: number }>;
+}) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-md">
-        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-          {payload[0].payload.day}
+      <div className="rounded-lg border border-border bg-popover px-3 py-2 text-popover-foreground shadow-md">
+        <p className="text-xs font-medium text-muted-foreground">
+          {payload[0].payload.label}
         </p>
 
-        <p className="mt-1 text-sm font-extrabold text-foreground">
-          {payload[0].value} Active Trips
+        {/* The value leads and the label follows: the reader already knows the series. The
+            short stroke is its key, a line rather than a filled box at tooltip density. */}
+        <p className="mt-1 flex items-center gap-2 text-sm font-semibold tabular-nums text-foreground">
+          <span aria-hidden className="inline-block h-0.5 w-3 rounded-full bg-primary" />
+          {payload[0].value} Scheduled Trips
         </p>
       </div>
     );
@@ -31,7 +52,9 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export default function WeeklyActivityChart() {
+export default function WeeklyActivityChart({
+  days,
+}: WeeklyActivityChartProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -39,59 +62,75 @@ export default function WeeklyActivityChart() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-xs flex flex-col justify-between">
-      <div>
-        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+    <div className="rounded-lg border border-border bg-card">
+      <div className="border-b border-border px-4 py-3">
+        <h3 className="section-title text-foreground">
           Weekly Activity
         </h3>
 
-        <p className="text-xs text-muted-foreground mt-1">Fleet utilization trends over the past week</p>
+        <p className="mt-1 text-sm text-muted-foreground">Scheduled trips over the last 7 days</p>
       </div>
 
-      <div className="h-[240px] w-full mt-6 min-h-0 min-w-0">
-        {mounted && (
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-            minWidth={0}
-          >
-            <AreaChart 
-              data={weeklyActivity}
-              margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+      {/* Padding lives on this wrapper, not on the fixed-height box below: the chart is 240px
+          tall and the box must be too, or the x-axis band would overflow into a nested scroll. */}
+      <div className="p-4">
+        <div className="h-[240px] w-full min-h-0 min-w-0">
+          {mounted && (
+            <ResponsiveContainer
+              width="99%"
+              height={240}
             >
-              <defs>
-                <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
+              <AreaChart
+                data={days}
+                margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+              >
+                {/* A solid hairline. A dashed grid reads as a projection or a threshold. */}
+                <CartesianGrid
+                  stroke="var(--border)"
+                  vertical={false}
+                />
 
-              <CartesianGrid 
-                strokeDasharray="4 4" 
-                stroke="var(--border)" 
-                vertical={false} 
-              />
+                <XAxis
+                  dataKey="label"
+                  tickLine={false}
+                  axisLine={false}
+                  dy={10}
+                  tick={AXIS_TICK}
+                />
 
-              <XAxis 
-                dataKey="day" 
-                tickLine={false}
-                axisLine={false}
-                dy={10}
-                style={{ fontSize: "11px", fill: "var(--muted-foreground)", fontWeight: 500 }}
-              />
+                {/* The y-axis is what makes a value readable without hovering, so the tooltip
+                    enhances rather than gates. Tabular figures: ticks align in a column. */}
+                <YAxis
+                  allowDecimals={false}
+                  tickLine={false}
+                  axisLine={false}
+                  width={32}
+                  tick={{ ...AXIS_TICK, style: { fontVariantNumeric: "tabular-nums" } }}
+                />
 
-              <Tooltip content={<CustomTooltip />} />
+                <Tooltip
+                  content={<CustomTooltip />}
+                  cursor={{ stroke: "var(--border-strong)", strokeWidth: 1 }}
+                />
 
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="var(--primary)"
-                strokeWidth={2}
-                fill="url(#activityGradient)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        )}
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="var(--primary)"
+                  strokeWidth={2}
+                  // Flat wash instead of the old gradient. 0.12 keeps the fill below the
+                  // gridline (1.23:1 vs 1.74:1 on card) so it reads as area, not as a block.
+                  fill="var(--primary)"
+                  fillOpacity={0.12}
+                  dot={false}
+                  // An 8px marker with a 2px ring in the card colour, so it stays legible
+                  // where it sits on the line.
+                  activeDot={{ r: 4, fill: "var(--primary)", stroke: "var(--card)", strokeWidth: 2 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -7,16 +7,19 @@ import {
   Cpu,
   Activity,
   ArrowLeft,
-  Radio,
-  Route as RouteIcon,
-  Wifi,
   FileDown,
 } from "lucide-react";
+
+import { roundSpeed } from "@/lib/utils/format-speed";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { apiFetch } from "@/lib/fetcher";
+import { DetailSkeleton } from "@/components/ui/skeletons/detail-skeleton";
+import { ErrorState } from "@/components/ui/error-state";
 import VehicleStatusBadge from "@/components/vehicles/vehicle-status-badge";
+import { useAuthStore } from "@/store/auth-store";
+import { toast } from "sonner";
 import dynamic from "next/dynamic";
 const VehicleMap = dynamic(() => import("@/components/vehicles/vehicle-map"), {
   ssr: false,
@@ -24,36 +27,29 @@ const VehicleMap = dynamic(() => import("@/components/vehicles/vehicle-map"), {
 
 interface Vehicle {
   id: string;
-
   vehicleName: string;
-
   vehicleNumber: string;
-
   gpsDeviceId: string;
-
   driverName: string;
-
-  clientName: string;
-
   status: string;
-
   latitude: number;
-
   longitude: number;
-
   speed: number;
-
   createdAt: string;
-
   updatedAt: string;
-}
 
+  client?: {
+    id: string;
+    name: string;
+  };
+}
 export default function VehicleDetailPage() {
   const params = useParams();
-
+  const { user } = useAuthStore();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const downloadReport = async () => {
     if (!vehicle) return;
@@ -87,7 +83,7 @@ export default function VehicleDetailPage() {
     } catch (error) {
       console.log(error);
 
-      alert("Failed to download report");
+      toast.error("Failed to download report");
     } finally {
       setDownloading(false);
     }
@@ -95,34 +91,78 @@ export default function VehicleDetailPage() {
 
   const fetchVehicle = async () => {
     try {
+      setLoading(true);
+      setError(false);
+
       const response = await apiFetch(`/vehicles/${params.id}`);
+
+      // apiFetch now rejects on non-2xx, so a 500/network failure reaches the catch
+      // and never falls through to "Vehicle not found". Kept as a defensive guard.
+      if (!response.ok) throw new Error("Request failed");
 
       const data = await response.json();
 
-      setVehicle(data.vehicle);
+      setVehicle(data.vehicle ?? null);
     } catch (error) {
       console.log(error);
+      setError(true);
     } finally {
       setLoading(false);
     }
   };
 
+  // Inlined loader (not a call to `fetchVehicle`) to satisfy the
+  // no-setState-in-effect lint rule; fetchVehicle stays for the retry button.
   useEffect(() => {
-    if (params.id) {
-      fetchVehicle();
+    if (!params.id) return;
+
+    async function load() {
+      try {
+        setError(false);
+
+        const response = await apiFetch(`/vehicles/${params.id}`);
+
+        if (!response.ok) throw new Error("Request failed");
+
+        const data = await response.json();
+
+        setVehicle(data.vehicle ?? null);
+      } catch (err) {
+        console.log(err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    load();
   }, [params.id]);
 
   if (loading) {
-    return <div className="p-6">Loading vehicle...</div>;
+    return <DetailSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <ErrorState
+          message="Couldn't load this vehicle."
+          onRetry={fetchVehicle}
+        />
+      </div>
+    );
   }
 
   if (!vehicle) {
-    return <div className="p-6">Vehicle not found</div>;
+    return (
+      <div className="rounded-lg border border-border bg-card p-10 text-center text-sm text-muted-foreground">
+        Vehicle not found
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-6">
       {/* Back */}
       <Link
         href="/vehicles"
@@ -135,7 +175,7 @@ export default function VehicleDetailPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+          <h1 className="page-title">
             {" "}
             {vehicle.vehicleName}
           </h1>
@@ -157,111 +197,58 @@ export default function VehicleDetailPage() {
       {/* Info Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {/* Driver */}
-        <div className="rounded-xl border border-border bg-background p-5">
+        <div className="rounded-lg border border-border bg-card p-5">
           <div className="flex items-center gap-3">
-            <User className="h-5 w-5 text-blue-600" />
+            <User className="h-5 w-5 text-muted-foreground" />
 
-            <h3 className="font-semibold">Driver</h3>
+            <h3 className="text-sm font-semibold">Driver</h3>
           </div>
 
-          <p className="mt-4 break-all text-xl font-bold md:text-2xl">
+          <p className="mt-4 break-all text-lg font-semibold">
             {vehicle.driverName}
           </p>
         </div>
 
         {/* GPS */}
-        <div className="rounded-xl border border-border bg-background p-5">
+        <div className="rounded-lg border border-border bg-card p-5">
           <div className="flex items-center gap-3">
-            <Cpu className="h-5 w-5 text-green-600" />
+            <Cpu className="h-5 w-5 text-muted-foreground" />
 
-            <h3 className="font-semibold">GPS Device</h3>
+            <h3 className="text-sm font-semibold">GPS Device</h3>
           </div>
 
-          <p className="mt-4 break-all text-2xl font-bold">
+          <p className="mt-4 break-all font-mono text-xl font-semibold">
             {vehicle.gpsDeviceId}
           </p>
         </div>
 
         {/* Client */}
-        <div className="rounded-xl border border-border bg-background p-5">
-          <div className="flex items-center gap-3">
-            <Car className="h-5 w-5 text-yellow-600" />
+        {user?.role === "ADMIN" && (
+          <div className="rounded-lg border border-border bg-card p-5">
+            <div className="flex items-center gap-3">
+              <Car className="h-5 w-5 text-muted-foreground" />
+              <h3 className="text-sm font-semibold">Client</h3>
+            </div>
 
-            <h3 className="font-semibold">Client</h3>
+            <p className="mt-4 break-all text-xl font-semibold">
+              {vehicle.client?.name || "N/A"}
+            </p>
           </div>
-
-          <p className="mt-4 break-all text-2xl font-bold">
-            {vehicle.clientName}
-          </p>
-        </div>
+        )}
       </div>
 
-      {/* Live Stats Bar */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {/* Active Vehicles */}
-        <div className="rounded-xl border border-border bg-background p-5">
-          <div className="flex items-center gap-3">
-            <Radio className="h-5 w-5 text-green-600" />
-
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Active Now
-            </h3>
-          </div>
-
-          <h2 className="mt-4 text-3xl font-bold">12</h2>
-
-          <p className="mt-1 text-sm text-muted-foreground">
-            Vehicles currently active
-          </p>
-        </div>
-
-        {/* Total Distance */}
-        <div className="rounded-xl border border-border bg-background p-5">
-          <div className="flex items-center gap-3">
-            <RouteIcon className="h-5 w-5 text-blue-600" />
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Total Distance
-            </h3>
-          </div>
-
-          <h2 className="mt-4 text-3xl font-bold">245 km</h2>
-
-          <p className="mt-1 text-sm text-muted-foreground">
-            Distance travelled today
-          </p>
-        </div>
-
-        {/* Live Updates */}
-        <div className="rounded-xl border border-border bg-background p-5">
-          <div className="flex items-center gap-3">
-            <Wifi className="h-5 w-5 text-yellow-600" />
-
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Live Updates
-            </h3>
-          </div>
-
-          <div className="mt-4 flex items-center gap-2">
-            <span className="h-3 w-3 rounded-full bg-green-500" />
-
-            <h2 className="text-2xl font-bold">Connected</h2>
-          </div>
-
-          <p className="mt-1 text-sm text-muted-foreground">
-            GPS updates active
-          </p>
-        </div>
-      </div>
-
-      {/* Location + Stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+      {/* Location + Stats. An "Active Now / Total Distance / Live Updates" bar and a "Current
+          Trip Summary" card used to sit here, printing hardcoded values (12, 245 km, 5h 22m,
+          29 May 2026) and a static "Connected" as if they were this vehicle's live data.
+          Nothing on this page fetches those numbers, so they are removed, not left to mislead. */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         {/* Location */}
 
-        <div className="rounded-xl border border-border bg-background p-4 md:p-6">
+        <div className="rounded-lg border border-border bg-card p-4 md:p-5">
           <div className="flex items-center gap-3">
-            <MapPin className="h-5 w-5 text-red-500" />
+            <MapPin className="h-5 w-5 text-muted-foreground" />
 
-            <h3 className="text-lg font-semibold">Live Vehicle Location</h3>
+            <h3 className="section-title">Live Vehicle Location</h3>
           </div>
 
           <div className="mt-6">
@@ -274,7 +261,7 @@ export default function VehicleDetailPage() {
                 />
               </div>
             ) : (
-              <div className="flex h-[320px] flex-col md:h-[420px]l items-center justify-center rounded-xl border border-dashed border-border text-center">
+              <div className="flex h-[320px] flex-col md:h-[420px] items-center justify-center rounded-lg border border-dashed border-border text-center">
                 <MapPin className="h-8 w-8 text-muted-foreground" />
 
                 <p className="mt-3 text-sm font-medium">
@@ -292,49 +279,52 @@ export default function VehicleDetailPage() {
             <div>
               <p className="text-sm text-muted-foreground">Latitude</p>
 
-              <h4 className="mt-1 text-sm font-semibold">{vehicle.latitude}</h4>
+              <h4 className="mt-1 font-mono text-sm font-semibold tabular-nums">{vehicle.latitude}</h4>
             </div>
 
             <div>
               <p className="text-sm text-muted-foreground">Longitude</p>
 
-              <h4 className="mt-1 text-sm font-semibold">
+              <h4 className="mt-1 font-mono text-sm font-semibold tabular-nums">
                 {vehicle.longitude}
               </h4>
             </div>
           </div>
         </div>
         {/* Speed */}
-        <div className="rounded-xl border border-border bg-background p-4 md:p-6">
+        <div className="rounded-lg border border-border bg-card p-4 md:p-5">
           <div className="flex items-center gap-3">
-            <Activity className="h-5 w-5 text-green-600" />
+            <Activity className="h-5 w-5 text-muted-foreground" />
 
-            <h3 className="text-lg font-semibold">Live Statistics</h3>
+            <h3 className="section-title">Live Statistics</h3>
           </div>
 
           <div className="mt-6">
             <p className="text-sm text-muted-foreground">Current Speed</p>
 
-            <h2 className="mt-2 text-4xl font-bold md:text-5xl">
-              {vehicle.speed}
+            <h2 className="mt-2 text-3xl font-semibold">
+              {roundSpeed(vehicle.speed)}
               <span className="ml-2 text-xl">km/h</span>
             </h2>
           </div>
 
-         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               href={`/tracking/${vehicle.id}`}
-              className="flex h-11 w-full items-center justify-center sm:w-auto rounded-lg bg-[#0f172a] px-5 py-3 text-sm font-medium text-white dark:bg-white dark:text-black"
+              className="flex h-11 w-full items-center justify-center sm:w-auto rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Track Live
             </Link>
 
-            <Link
-              href={`/vehicles/${vehicle.id}/trips`}
-              className="flex h-11 w-full items-center justify-center sm:w-auto rounded-lg border border-border px-5 py-3 text-sm font-medium"
-            >
-              Trip History
-            </Link>
+            {/* Trip pages are CLIENT-only (lib/role-routes.ts); for an ADMIN this bounced. */}
+            {user?.role === "CLIENT" && (
+              <Link
+                href="/trips"
+                className="flex h-11 w-full items-center justify-center sm:w-auto rounded-lg border border-border px-5 py-3 text-sm font-medium transition-colors hover:bg-muted"
+              >
+                Trips
+              </Link>
+            )}
 
             <button
               onClick={downloadReport}
@@ -348,44 +338,6 @@ export default function VehicleDetailPage() {
           </div>
         </div>
 
-        {/* Trip Summary */}
-        <div className="rounded-xl border border-border bg-background p-4 md:p-6">
-          <div className="flex items-center gap-3">
-            <Activity className="h-5 w-5 text-blue-600" />
-
-            <h3 className="text-lg font-semibold">Current Trip Summary</h3>
-          </div>
-
-          <div className="mt-6 space-y-5">
-            <div>
-              <p className="text-sm text-muted-foreground">
-                Distance Travelled
-              </p>
-
-              <h4 className="mt-1 text-2xl font-bold">245 km</h4>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground">Running Time</p>
-
-              <h4 className="mt-1 text-2xl font-bold">5h 22m</h4>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground">Idle Time</p>
-
-              <h4 className="mt-1 text-2xl font-bold">1h 10m</h4>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground">Trip Started</p>
-
-              <h4 className="mt-1 text-lg font-semibold">
-                29 May 2026 • 08:30 AM
-              </h4>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

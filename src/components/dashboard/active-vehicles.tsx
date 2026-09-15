@@ -1,76 +1,83 @@
-import { Truck } from "lucide-react";
+import { formatSpeed } from "@/lib/utils/format-speed";
+import {
+  STATUS_CHIP,
+  StatusCue,
+  type StatusTone,
+} from "@/components/ui/status-chip";
 
 interface ActiveVehiclesProps {
   vehicles: any[];
 }
 
+/** Branch order and the catch-all fall-through are unchanged from the previous inline
+ *  ternary; only the colours they resolve to moved. */
+function statusTone(status?: string): StatusTone {
+  if (status === "MOVING") return "ok";
+  if (status === "IDLE") return "attn";
+  return "fault";
+}
+
+/**
+ * Recently reporting vehicles as a ledger: one hairline-divided row per vehicle. No
+ * card-within-card and no repeated per-row icon, so registration, status and speed are the
+ * only things on the row competing for attention.
+ */
 export default function ActiveVehicles({
   vehicles,
 }: ActiveVehiclesProps) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-xs">
-      <div>
-        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+    <div className="h-full rounded-lg border border-border bg-card">
+      <div className="border-b border-border px-4 py-3">
+        <h3 className="section-title text-foreground">
           Active Vehicles
         </h3>
 
-        <p className="text-xs text-muted-foreground mt-1">Real-time status of active fleet units</p>
+        <p className="mt-1 text-sm text-muted-foreground">Real-time status of active fleet units</p>
       </div>
 
-      <div className="space-y-3 mt-6">
-        {vehicles?.map((vehicle) => (
-          <div
-            key={vehicle.id}
-            className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-4 transition-all duration-200 hover:bg-muted/40"
-          >
-            {/* LEFT */}
+      {!vehicles?.length ? (
+        <p className="py-10 text-center text-sm text-muted-foreground">
+          No active vehicles
+        </p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {vehicles.map((vehicle) => {
+            const tone = statusTone(vehicle.status);
 
-            <div className="flex items-center gap-3.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 border border-primary/10">
-                <Truck className="h-4.5 w-4.5 text-primary" />
-              </div>
-
-              <div>
-                <h4 className="text-sm font-bold leading-none text-foreground">
-                  {vehicle.vehicleNumber}
-                </h4>
-
-                <p className="text-xs text-muted-foreground mt-1.5 font-medium">
-                  {vehicle.driverName}
-                </p>
-              </div>
-            </div>
-
-            {/* RIGHT */}
-
-            <div className="text-right">
-              <div
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase border ${
-                  vehicle.status === "MOVING"
-                    ? "bg-success/10 text-success border-success/15"
-                    : vehicle.status === "IDLE"
-                      ? "bg-warning/10 text-warning border border-warning/15"
-                      : "bg-destructive/10 text-destructive border border-destructive/15"
-                }`}
+            return (
+              <li
+                key={vehicle.id}
+                className="flex items-center justify-between gap-4 px-4 py-3"
               >
-                <span className={`h-1.5 w-1.5 rounded-full ${
-                  vehicle.status === "MOVING"
-                    ? "bg-success"
-                    : vehicle.status === "IDLE"
-                      ? "bg-warning"
-                      : "bg-destructive"
-                }`} />
+                <div className="min-w-0">
+                  <p className="font-mono text-sm font-semibold leading-none text-foreground">
+                    {vehicle.vehicleNumber}
+                  </p>
 
-                {vehicle.status}
-              </div>
+                  <p className="mt-1.5 text-sm text-muted-foreground">
+                    {vehicle.driverName}
+                  </p>
+                </div>
 
-              <p className="mt-1.5 text-xs text-foreground font-semibold">
-                {vehicle.speed} km/h
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+                <div className="flex shrink-0 items-center gap-3">
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_CHIP[tone]}`}
+                  >
+                    <StatusCue tone={tone} />
+                    {vehicle.status}
+                  </span>
+
+                  {/* Fixed width + tabular figures: speeds form a right-aligned column down
+                      the list, and the chips beside them keep a common right edge. */}
+                  <span className="w-16 text-right text-sm font-medium tabular-nums text-foreground">
+                    {formatSpeed(vehicle.speed)}
+                  </span>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

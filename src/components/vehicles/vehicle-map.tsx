@@ -67,7 +67,7 @@ export default function VehicleMap({
   vehicleName,
 }: VehicleMapProps) {
   return (
-    <div className="overflow-hidden rounded-xl">
+    <div className="overflow-hidden rounded-lg">
       <MapContainer
         center={[latitude, longitude]}
         zoom={13}

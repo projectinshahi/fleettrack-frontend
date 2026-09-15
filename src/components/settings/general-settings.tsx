@@ -2,13 +2,13 @@ import { Globe } from "lucide-react";
 
 export default function GeneralSettings() {
   return (
-    <div className="rounded-2xl border border-border bg-background p-4 md:p-6">
+    <div className="rounded-lg border border-border bg-card p-4 md:p-5">
       {/* Header */}
 
       <div className="flex items-center gap-3">
         <Globe className="h-5 w-5 text-muted-foreground" />
 
-        <h2 className="text-xl font-semibold md:text-2xl">
+        <h2 className="section-title">
           General Settings
         </h2>
       </div>
@@ -52,7 +52,7 @@ export default function GeneralSettings() {
             <input
               type="text"
               defaultValue={item.value}
-              className="h-12 w-full rounded-xl border border-border bg-muted px-4 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
+              className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
         ))}
@@ -93,14 +93,20 @@ export default function GeneralSettings() {
                 </p>
               </div>
 
-              <button className="flex h-6 w-11 items-center rounded-full bg-[#0f172a] px-1">
-                <div className="ml-auto h-4 w-4 rounded-full bg-white" />
+              <button
+                type="button"
+                role="switch"
+                aria-checked="true"
+                aria-label={item.title}
+                className="flex h-6 w-11 items-center rounded-full bg-primary px-1"
+              >
+                <div className="ml-auto h-4 w-4 rounded-full bg-primary-foreground" />
               </button>
             </div>
           ))}
         </div>
 
-        <button className="mt-8 w-full rounded-lg bg-[#0f172a] px-5 py-3 text-sm font-medium text-white sm:w-auto">
+        <button className="mt-8 w-full rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground sm:w-auto">
           Save Changes
         </button>
       </div>

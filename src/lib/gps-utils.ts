@@ -50,7 +50,6 @@ export function calculateBearing(
   return (toDeg(Math.atan2(y, x)) + 360) % 360;
 }
 
-
 export function isValidCoordinate(lat: number, lng: number): boolean {
   if (isNaN(lat) || isNaN(lng)) return false;
   if (lat === 0 && lng === 0) return false;
@@ -59,11 +58,8 @@ export function isValidCoordinate(lat: number, lng: number): boolean {
   return true;
 }
 
-
-
 const MIN_DISTANCE_METERS = 10;
 const MAX_JUMP_DISTANCE = 500;
-
 
 export function filterGPSNoise(
   points: TrailPoint[],
@@ -89,27 +85,6 @@ export function filterGPSNoise(
   return filtered;
 }
 
-
-
-export function sortAndDedupeTrail(points: TrailPoint[]): TrailPoint[] {
-  const sorted = [...points].sort((a, b) => a.timestamp - b.timestamp);
-
-  const deduped: TrailPoint[] = [];
-  for (const p of sorted) {
-    if (deduped.length === 0) {
-      deduped.push(p);
-    } else {
-      const last = deduped[deduped.length - 1];
-      if (p.timestamp !== last.timestamp) {
-        deduped.push(p);
-      }
-    }
-  }
-
-  return deduped;
-}
-
-
 export function enrichWithHeadings(points: TrailPoint[]): TrailPoint[] {
   return points.map((p, i) => {
     if (i === 0) return { ...p, heading: p.heading ?? 0 };
@@ -120,14 +95,11 @@ export function enrichWithHeadings(points: TrailPoint[]): TrailPoint[] {
   });
 }
 
-
-
 export interface TrailSegment {
   positions: [number, number][];
   opacity: number;
   weight: number;
 }
-
 
 export function buildFadedTrailSegments(points: TrailPoint[]): TrailSegment[] {
   if (points.length < 2) return [];

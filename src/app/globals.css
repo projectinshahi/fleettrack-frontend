@@ -10,20 +10,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
+  /* Was aliased to --font-sans while no heading face existed. Now that Archivo is
+     loaded it points at the real token, so the `font-heading` utility and the
+     `.page-title` / `.section-title` classes below all resolve to the same face. */
+  --font-heading: var(--font-heading);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -45,130 +35,276 @@
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+
+  /* Primary as TEXT. `--primary` is tuned to carry white (or near-black in dark); as a
+     text colour on a light surface it is too light to clear 4.5:1. Links, the active
+     nav label and any "primary-coloured words" read this instead. */
+  --color-primary-ink: var(--primary-ink);
+
+  /* Two structural border weights plus one for controls. `--border-strong` exists
+     because WCAG 1.4.11 requires 3:1 for the visual boundary of a form control, while a
+     decorative panel edge does not — one token cannot be quiet enough for a table rule
+     and strong enough for an input. */
+  --color-border-soft: var(--border-soft);
+  --color-border-strong: var(--border-strong);
+
+  /* Status: five tones, three tokens each. `-surface` is an explicit fill rather than an
+     alpha tint, and `-ink` is always darker/lighter than its own hue — never `text-X` on
+     `bg-X/10`, which is the pattern that fails contrast in every theme. */
+  --color-status-signal: var(--status-signal);
+  --color-status-signal-surface: var(--status-signal-surface);
+  --color-status-signal-ink: var(--status-signal-ink);
+  --color-status-ok: var(--status-ok);
+  --color-status-ok-surface: var(--status-ok-surface);
+  --color-status-ok-ink: var(--status-ok-ink);
+  --color-status-attn: var(--status-attn);
+  --color-status-attn-surface: var(--status-attn-surface);
+  --color-status-attn-ink: var(--status-attn-ink);
+  --color-status-fault: var(--status-fault);
+  --color-status-fault-surface: var(--status-fault-surface);
+  --color-status-fault-ink: var(--status-fault-ink);
+  --color-status-neutral: var(--status-neutral);
+  --color-status-neutral-surface: var(--status-neutral-surface);
+  --color-status-neutral-ink: var(--status-neutral-ink);
+
+  /* ONE radius. Every alias resolves to --radius so `rounded-sm` through `rounded-4xl`
+     are the same 6px and the visual language cannot drift again. `rounded-full` is not
+     derived from --radius and is deliberately untouched — pills, dots, avatars and
+     toggles stay circular. */
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
+  --radius-4xl: var(--radius);
+
+  /* Map chrome: the fixed dark instrument layer over Google's basemap. See :root. */
+  --color-chrome-bg: var(--chrome-bg);
+  --color-chrome-bg-2: var(--chrome-bg-2);
+  --color-chrome-line: var(--chrome-line);
+  --color-chrome-fg: var(--chrome-fg);
+  --color-chrome-fg-dim: var(--chrome-fg-dim);
+  --color-chrome-signal: var(--chrome-signal);
 }
 
 :root {
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* Three faces, one job each. The fallback stacks stay metric-close so a swap does not
+     reflow: Plex Sans against the system UI stack, Plex Mono against the system mono
+     stack, Archivo against the same UI stack it sits above. */
+  --font-sans: var(--font-plex-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-heading: var(--font-archivo), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   
-  --background: #F8FAFC;
-  --foreground: #0F172A;
-  
+  /* Light surfaces — TWO tiers, not three. `--popover` is deliberately the same white
+     as `--card`: in light mode a floating panel separates by border + shadow, so it
+     needs no third fill. Dark cannot do that (shadow is subtracted light, and there is
+     nothing to subtract on near-black), which is why dark below has three real tiers.
+     The asymmetry is the system working, not an omission. */
+  --background: #EDEBE7;
+  --foreground: #1C1A17;
+
   --card: #FFFFFF;
-  --card-foreground: #0F172A;
-  
+  --card-foreground: #1C1A17;
+
   --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  
-  --primary: #2563EB;
+  --popover-foreground: #1C1A17;
+
+  /* Magenta is the FleetTrack signal. It reaches the UI only through `--primary`,
+     consumed by the brand tile, the active nav item, focus rings and primary buttons —
+     signal scale, never a decorative fill. `--primary-ink` is the same hue tuned to be
+     legible AS TEXT: `--primary` carries white, but as words on white it is too light. */
+  --primary: #A3175E;
   --primary-foreground: #FFFFFF;
-  
-  --secondary: #F1F5F9;
-  --secondary-foreground: #0F172A;
-  
-  --muted: #F1F5F9;
-  --muted-foreground: #64748B;
-  
-  --accent: #F1F5F9;
-  --accent-foreground: #0F172A;
-  
-  --destructive: #EF4444;
+  --primary-ink: #8E1253;
+
+  --secondary: #EDEBE7;
+  --secondary-foreground: #1C1A17;
+
+  --muted: #EDEBE7;
+  --muted-foreground: #5C5953;
+
+  --accent: #EDEBE7;
+  --accent-foreground: #1C1A17;
+
+  /* Legacy semantic aliases. 239 call sites still read these three directly, so they
+     stay and are simply re-pointed at the new status hues — the whole app picks up the
+     palette without a single component edit. Phase 2 migrates those call sites to
+     --status-* and these can then be retired. */
+  --destructive: #B3261E;
   --destructive-foreground: #FFFFFF;
-  
-  --success: #10B981;
+
+  --success: #1A7F4B;
   --success-foreground: #FFFFFF;
-  
-  --warning: #F59E0B;
+
+  --warning: #9A6400;
   --warning-foreground: #FFFFFF;
-  
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --ring: #2563EB;
-  --radius: 0.75rem;
 
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #0F172A;
-  --sidebar-primary: #2563EB;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F1F5F9;
-  --sidebar-accent-foreground: #0F172A;
-  --sidebar-border: #E2E8F0;
-  --sidebar-ring: #2563EB;
+  /* Status tones — the locked mapping, so nothing has to be inferred later:
+       signal  (magenta) FleetTrack signal / selected / in-progress.  NEVER vehicle MOVING.
+       ok      (green)   MOVING, APPROVED, client ACTIVE.
+       attn    (amber)   IDLE, DELAYED, PENDING.
+       fault   (red)     OFFLINE, CANCELLED, REJECTED.
+       neutral (grey)    COMPLETED, and every nominal category (delay categories, customer
+                         types) — which is what stops the app reading as a rainbow.
+     Each tone is a triple: the hue for dots and rails, an explicit surface fill, and an
+     ink that is never a tint of its own hue. */
+  --status-signal: #A3175E;
+  --status-signal-surface: #F9E9F1;
+  --status-signal-ink: #8A1152;
 
-  --chart-1: #2563EB;
-  --chart-2: #10B981;
-  --chart-3: #F59E0B;
-  --chart-4: #6366F1;
-  --chart-5: #EC4899;
+  --status-ok: #1A7F4B;
+  --status-ok-surface: #E4F2E9;
+  --status-ok-ink: #14603A;
+
+  --status-attn: #9A6400;
+  --status-attn-surface: #F7EEDC;
+  --status-attn-ink: #7A4F00;
+
+  --status-fault: #B3261E;
+  --status-fault-surface: #FAE7E5;
+  --status-fault-ink: #93201A;
+
+  --status-neutral: #6B665E;
+  --status-neutral-surface: #EFEDE9;
+  --status-neutral-ink: #4A4741;
+
+  /* Border-led hierarchy: `soft` for internal rules, `border` for panel and table edges,
+     `strong` for anything with a control boundary. `--input` carries the control weight,
+     which is what lifts every form field from 1.23:1 to 3.63:1 (WCAG 1.4.11 wants 3:1). */
+  --border-soft: #E7E4DE;
+  --border: #C9C4BB;
+  --border-strong: #898680;
+  --input: #898680;
+  --ring: #A3175E;
+  /* ONE radius for the whole app (6px). Every rounded-* alias resolves to this via the
+     @theme block above, so the scale cannot drift again. rounded-full is unaffected. */
+  --radius: 0.375rem;
+
+  /* Map chrome — the dark instrument layer FleetTrack draws over Google's basemap: the
+     map controls, the live and fleet-count badges, the vehicle popup, the marker label
+     and the route legend. Declared here and deliberately NOT redefined in .dark: the
+     basemap stays light in both themes, so the chrome must too. A surface uses these
+     tokens if and only if its backdrop is map tiles.
+       bg      11.03:1 against Google's darkest large fill (water #A8D0F0), the worst case
+       bg-2    hover / raised step, 1.22:1 above bg
+       line    edges and internal rules (decorative, 1.49:1)
+       fg      15.33:1 on bg · 12.59:1 on bg-2
+       fg-dim  7.01:1 on bg · 5.76:1 on bg-2
+       signal  the magenta that stays legible ON the chrome: 6.28:1, and 6.28:1 for the
+               chrome ink laid on it. The light-theme --primary measures 2.42:1 there,
+               which is why this token exists.
+     No separate edge token: nothing on the map needs a boundary darker than the fill. */
+  --chrome-bg: #191713;
+  --chrome-bg-2: #2A2825;
+  --chrome-line: #3A3630;
+  --chrome-fg: #F0EDE8;
+  --chrome-fg-dim: #A8A199;
+  --chrome-signal: #F06BA8;
+
+  /* `only` forbids the BROWSER from applying its own colour transformation on top of
+     ours. Smart-TV / Android Chrome builds ship "Auto Dark Theme", which force-darkens
+     any page that advertises support for light alone — so plain `color-scheme: light`
+     was read as "this page can't do dark, darken it for the user". Dark mode escaped it
+     (it advertises dark, so the browser leaves it alone), which is exactly why dark
+     looked right on the TV and light came back dark. Nothing here is TV- or width-
+     specific: the app's theme class stays the single source of truth on every device. */
+  color-scheme: only light;
 }
 
 .dark {
-  --background: #0F172A;
-  --foreground: #F8FAFC;
-  
-  --card: #111827;
-  --card-foreground: #F8FAFC;
-  
-  --popover: #111827;
-  --popover-foreground: #F8FAFC;
-  
-  --primary: #2563EB;
-  --primary-foreground: #FFFFFF;
-  
-  --secondary: #1E293B;
-  --secondary-foreground: #F8FAFC;
-  
-  --muted: #1E293B;
-  --muted-foreground: #94A3B8;
-  
-  --accent: #1E293B;
-  --accent-foreground: #F8FAFC;
-  
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  
-  --success: #10B981;
-  --success-foreground: #FFFFFF;
-  
-  --warning: #F59E0B;
-  --warning-foreground: #FFFFFF;
-  
-  --border: #1E293B;
-  --input: #1E293B;
-  --ring: #2563EB;
+  /* Warm mineral operations palette. THREE real surface tiers, because dark mode cannot
+     express elevation with shadow — shadow is subtracted light, and there is nothing to
+     subtract on near-black. Depth here is carried by the fills themselves:
+     background < card < popover, each step a measured ~1.16–1.19:1 apart. */
+  --background: #100F0E;      /* page background */
+  --foreground: #F0EDE8;      /* primary text */
 
-  --sidebar: #111827;
-  --sidebar-foreground: #F8FAFC;
-  --sidebar-primary: #2563EB;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #1E293B;
-  --sidebar-accent-foreground: #F8FAFC;
-  --sidebar-border: #1E293B;
-  --sidebar-ring: #2563EB;
+  --card: #211F1C;            /* primary surface — panels, tables, the nav rail */
+  --card-foreground: #F0EDE8;
 
-  --chart-1: #3B82F6;
-  --chart-2: #34D399;
-  --chart-3: #FBBF24;
-  --chart-4: #818CF8;
-  --chart-5: #F472B6;
+  --popover: #2E2D2B;         /* elevated surface — dropdowns, dialogs, sheets */
+  --popover-foreground: #F0EDE8;
+
+  /* Magenta lifts in dark rather than deepening, so `--primary-foreground` inverts to
+     near-black to keep 6.10:1 on a filled button. */
+  --primary: #F06BA8;
+  --primary-foreground: #1C1A17;
+  --primary-ink: #F58CBC;
+
+  --secondary: #2A2825;       /* chip / control surface */
+  --secondary-foreground: #F0EDE8;
+
+  --muted: #2A2825;
+  --muted-foreground: #A8A199; /* readable secondary text */
+
+  --accent: #2A2825;
+  --accent-foreground: #F0EDE8;
+
+  /* Legacy semantic aliases — see :root. Re-pointed, not removed. */
+  --destructive: #E5675E;
+  --destructive-foreground: #1C1A17;
+
+  --success: #3DBF7E;
+  --success-foreground: #1C1A17;
+
+  --warning: #D9A227;
+  --warning-foreground: #1C1A17;
+
+  /* Status tones, dark. Same five roles; hues lift and inks lift further so each chip
+     reads against its own surface rather than against the page. */
+  --status-signal: #F06BA8;
+  --status-signal-surface: #3A2130;
+  --status-signal-ink: #F58CBC;
+
+  --status-ok: #3DBF7E;
+  --status-ok-surface: #1B3328;
+  --status-ok-ink: #5CD196;
+
+  --status-attn: #D9A227;
+  --status-attn-surface: #332A18;
+  --status-attn-ink: #E5B84D;
+
+  --status-fault: #E5675E;
+  --status-fault-surface: #3A201C;
+  --status-fault-ink: #F08A82;
+
+  --status-neutral: #8C8880;
+  --status-neutral-surface: #302E2A;
+  --status-neutral-ink: #B5AEA5;
+
+  /* Borders lighten rather than darken here, so the same three weights survive:
+     soft 1.12:1, border 1.72:1, strong 3.06:1 against --card. */
+  --border-soft: #2A2825;
+  --border: #474542;
+  /* Lifted from #6D6A66 in Phase 2B. A form control inside a dialog sits on --popover,
+     the lightest dark surface, and its own fill differs from that by only 1.39:1 — so the
+     border is the ONLY thing identifying the control. The old value measured 2.56:1
+     there. This clears 3:1 against all three dark surfaces: popover 3.04, card 3.63,
+     background 4.23. */
+  --border-strong: #797671;
+  --input: #797671;
+  --ring: #F06BA8;
+
+  /* Matches :root — `only` so a browser-level auto-theme can never re-tint our dark
+     palette either. Native widgets (scrollbars, form controls) still follow the theme. */
+  color-scheme: only dark;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    /* Full-strength default focus outline. At /50 it measured 2.62:1 on card in light and
+       2.42:1 in dark, under the 3:1 a focus indicator needs; now 7.39 and 5.77. */
+    @apply border-border outline-ring;
   }
   body {
     @apply bg-background text-foreground;
   }
   html {
     @apply font-sans;
+  }
+  option {
+    @apply bg-background text-foreground;
   }
 }
 
@@ -183,6 +319,22 @@ body {
     color 0.3s ease;
 }
 
+/* WCAG 2.3.3. One global switch rather than a `motion-safe:` prefix on every animated
+ * utility: skeleton pulses, dialog and popup fades, spinners, the tracking rail's width
+ * transition and the theme fade above all settle to their end state at once. The map
+ * marker's infinite pulse is hidden outright in tracking-map.tsx, because a frozen ring
+ * would read as a selection ring. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 
 
 .no-scrollbar::-webkit-scrollbar {
@@ -193,6 +345,77 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Always-visible slim scrollbar for panels the user must be able to scroll with a
+ * pointer alone.
+ *
+ * `.no-scrollbar` is fine for panels reachable by wheel or touch, but it is actively
+ * harmful on a list that overflows on a TV: hiding the bar removes the only thing a
+ * remote/air-mouse cursor can grab, AND removes the only visual cue that there is more
+ * content below. The Fleet Vehicles list used `.no-scrollbar`, which is why lower
+ * vehicles were unreachable on a TV while working fine on a laptop trackpad.
+ *
+ * Kept slim and theme-coloured so it stays consistent with the FleetTrack look, and wide
+ * enough (10px) to be a realistic pointer target on a large display.
+ */
+.slim-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.slim-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.slim-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.slim-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 9999px;
+  /* Inset the thumb without shrinking the hit area — the padding stays grabbable. */
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.slim-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
+}
+
+/* The heading classes sit in the components layer, below utilities, so a utility on the same
+ * element wins: `section-title font-mono` sets an identifier heading in Plex Mono. Unlayered,
+ * these rules outranked every utility and those headings fell back to Archivo. */
+@layer components {
+  /* Shared page-title style — single source of truth for every main page header, used by
+   * all 20 dashboard pages. Archivo, through --font-heading. */
+  .page-title {
+    font-family: var(--font-heading);
+    /* 24px on a phone, 28px from ~840px up. One h1 per page with no height constraint,
+       so this is the one place a fluid size is safe — it adds no breakpoint and cannot
+       clip a fixed-height control. */
+    font-size: clamp(1.5rem, 1.29rem + 0.86vw, 1.75rem);
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* H2 — a major section inside a page (panel and detail-group headers).
+   *
+   * This tier was the one real hierarchy break in the app: the same rank was written as
+   * `text-lg font-semibold` in some panels and `text-base font-semibold` in others. One
+   * class settles it. H3 stays on the body face at `text-sm font-semibold`, which was
+   * already uniform — the display face earns its keep at H1/H2, not below. */
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: 1.0625rem;  /* 17px */
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}
+
 /* LEAFLET FIX */
 
 .leaflet-container {

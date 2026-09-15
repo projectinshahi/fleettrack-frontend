@@ -2,11 +2,11 @@ import { Plug } from "lucide-react";
 
 export default function IntegrationSettings() {
   return (
-    <div className="rounded-2xl border border-border bg-background p-4 md:p-6">
+    <div className="rounded-lg border border-border bg-card p-4 md:p-5">
       <div className="flex items-center gap-3">
         <Plug className="h-5 w-5 text-muted-foreground" />
 
-        <h2 className="text-xl font-semibold md:text-2xl">
+        <h2 className="section-title">
           Integration Settings
         </h2>
       </div>
@@ -49,12 +49,12 @@ export default function IntegrationSettings() {
             <input
               type="text"
               defaultValue={item.value}
-              className="h-12 w-full rounded-xl border border-border bg-muted px-4 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
+              className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
         ))}
 
-        <button className="mt-4 w-full rounded-lg bg-[#0f172a] px-5 py-3 text-sm font-medium text-white sm:w-auto">
+        <button className="mt-4 w-full rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground sm:w-auto">
           Save Integrations
         </button>
       </div>

@@ -1,0 +1,41 @@
+# Build context exclusions for the admin image.
+#
+# The build stage runs `npm ci` and `npm run build` from source, so nothing generated on
+# the host should enter the context. Excluding .next matters twice over: it keeps the
+# context small, and it prevents a stale .next/dev/types/routes.d.ts from the host dev
+# server being copied in — tsconfig.json includes that path, and `next build` type-checks
+# it, so a corrupt host artifact would fail the image build.
+
+node_modules
+.next
+out
+build
+.git
+.gitignore
+
+# Secrets / local config. .env.local holds this developer's values; the image must be
+# built with --build-arg instead so nothing local is baked in.
+.env
+.env.*
+
+# Test / tooling output
+coverage
+*.log
+*.tsbuildinfo
+
+# Editor / OS noise
+.vscode
+.idea
+.DS_Store
+
+# Docs and agent instructions — not needed to build
+README.md
+AGENTS.md
+CLAUDE.md
+
+# Docker's own files
+Dockerfile
+.dockerignore
+
+# Kept ON PURPOSE (do not add these): src, public, package.json, package-lock.json,
+# next.config.ts, tsconfig.json, postcss.config.mjs, components.json, next-env.d.ts

@@ -1,21 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { Eye, EyeOff, Truck } from "lucide-react";
-import { useAuthStore } from "@/store/auth-store";
 import { useState } from "react";
+import { useAuthStore } from "@/store/auth-store";
 import { API_URL } from "@/lib/api";
 import { toast } from "sonner";
+import AuthShell from "@/components/auth/auth-shell";
+import AuthInput from "@/components/auth/auth-input";
+import AuthButton from "@/components/auth/auth-button";
+import FullScreenLoader from "@/components/ui/full-screen-loader";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {},
+  );
   const { setAuth } = useAuthStore();
+
+  // Busy = request in flight OR the post-success transition is playing.
+  const busy = loading || signingIn;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Guard against double submission (Enter key, rapid clicks).
+    if (busy) return;
+
+    // Client-side validation (UI only) — the authentication flow below is unchanged.
+    const nextErrors: { email?: string; password?: string } = {};
+    if (!email.trim()) nextErrors.email = "Email is required";
+    else if (!EMAIL_RE.test(email.trim()))
+      nextErrors.email = "Enter a valid email address";
+    if (!password) nextErrors.password = "Password is required";
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
 
     try {
       setLoading(true);
@@ -30,159 +53,106 @@ export default function LoginPage() {
           password,
         }),
       });
-      console.log(response.status);
 
       const data = await response.json();
-      console.log("LOGIN RESPONSE:", data);
+
+      if (!response.ok) {
+        toast.error(data.message || "Login failed");
+        return;
+      }
 
       if (data.success) {
-        toast.success("Login successful");
-
+        // Auth is complete and the user/role are resolved here — persist, then show the
+        // full-screen transition loader and hand off to the dashboard (unchanged nav).
         setAuth(data.user, data.token);
 
         document.cookie = `token=${data.token}; path=/`;
 
+        setSigningIn(true);
+
         setTimeout(() => {
           window.location.href = "/dashboard";
-        }, 1000);
+        }, 700);
       } else {
-        toast.error("Login failed");
+        toast.error(data.message || "Login failed");
       }
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong. Please try again.");
     } finally {
+      // On success the loader stays up via `signingIn`; this only restores the button
+      // on the failure paths.
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left Side */}
-      <div className="hidden w-1/2 flex-col justify-between bg-[linear-gradient(180deg,#111827_0%,#0f172a_55%,#020817_100%)] p-12 text-white lg:flex">
-        {/* Logo */}
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2563eb]">
-            <Truck className="h-7 w-7 text-white" />
-          </div>
-
-          <div>
-            <h1 className="text-4xl font-bold">FleetTrack</h1>
-
-            <p className="mt-1 text-slate-400">GPS Fleet Monitoring Platform</p>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="max-w-md">
-          <h2 className="text-5xl font-bold leading-tight">
-            Manage Your Fleet
-            <br />
-            Smarter & Faster
-          </h2>
-
-          <p className="mt-6 text-lg leading-8 text-slate-400">
-            Monitor vehicles, manage drivers, track live locations and optimize
-            fleet operations from one unified dashboard.
+    <>
+      <AuthShell
+        title="Welcome Back"
+        subtitle="Login to continue to your FleetTrack dashboard"
+        footer={
+          <p className="text-center text-sm text-muted-foreground">
+            FleetTrack Admin Dashboard
           </p>
-        </div>
+        }
+      >
+        <form onSubmit={handleLogin} className="space-y-5" noValidate aria-busy={busy}>
+          <fieldset disabled={busy} className="space-y-5 border-0 p-0">
+            <AuthInput
+              id="email"
+              label="Email Address"
+              type="email"
+              value={email}
+              onChange={(v) => {
+                setEmail(v);
+                if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
+              }}
+              placeholder="Enter email address"
+              autoComplete="email"
+              error={errors.email}
+            />
 
-        {/* Footer */}
-        <div>
-          <p className="text-sm text-slate-500">
-            © 2026 FleetTrack. All rights reserved.
-          </p>
-        </div>
-      </div>
+            <AuthInput
+              id="password"
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(v) => {
+                setPassword(v);
+                if (errors.password)
+                  setErrors((p) => ({ ...p, password: undefined }));
+              }}
+              placeholder="Enter password"
+              autoComplete="current-password"
+              error={errors.password}
+            />
 
-      {/* Right Side */}
-      <div className="flex w-full items-center justify-center px-6 py-10 lg:w-1/2">
-        <div className="w-full max-w-md rounded-3xl border border-border bg-background p-8 shadow-sm">
-          {/* Header */}
-          <div>
-            <h2 className="text-4xl font-bold tracking-tight">Welcome Back</h2>
-
-            <p className="mt-3 text-muted-foreground">
-              Login to continue to FleetTrack dashboard
-            </p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleLogin} className="mt-10 space-y-6">
-            {/* Email */}
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Email Address
-              </label>
-
-              <input
-                type="email"
-                placeholder="Enter email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 w-full rounded-xl border border-border bg-muted px-4 text-sm outline-none transition-colors focus:border-primary"
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="mb-2 block text-sm font-medium">Password</label>
-
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 w-full rounded-xl border border-border bg-muted px-4 pr-12 text-sm outline-none transition-colors focus:border-primary"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Options */}
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 shrink-0 rounded border border-input accent-primary"
+                />
                 Remember me
               </label>
 
               <Link
                 href="/forgot-password"
-                className="text-sm font-medium text-[#2563eb]"
+                className="text-sm font-medium text-primary hover:underline"
               >
                 Forgot Password?
               </Link>
             </div>
 
-            {/* Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="h-12 w-full rounded-xl bg-[#2563eb] text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
+            <AuthButton loading={loading} disabled={busy}>
               {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
+            </AuthButton>
+          </fieldset>
+        </form>
+      </AuthShell>
 
-          {/* Footer */}
-          <div className="mt-8 border-t border-border pt-6">
-            <p className="text-center text-sm text-muted-foreground">
-              FleetTrack Admin Dashboard
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+      {signingIn && <FullScreenLoader />}
+    </>
   );
 }
