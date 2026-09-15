@@ -60,6 +60,7 @@ export default function AddClientModal({
               onSuccess?.();
             }}
           />
+          
         </div>
       </DialogContent>
     </Dialog>
