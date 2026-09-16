@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Dialog as DialogPrimitive } from "radix-ui";
 import { toast } from "sonner";
 import { createUser, updateUser } from "@/lib/user-api";
 import { apiErrorMessage } from "@/lib/fetcher";
@@ -21,6 +22,8 @@ export default function UserModal({
   onSuccess,
 }: Props) {
   const [loading, setLoading] = useState(false);
+  // Radix only returns focus to its own Dialog.Trigger; this modal is opened from the page.
+  const openerRef = useRef<HTMLElement | null>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -79,87 +82,110 @@ export default function UserModal({
     }
   }
 
+  // The Radix Dialog primitive supplies the keyboard behaviour only: focus moves in and stays
+  // inside, Escape closes like Cancel, and focus returns to the opener. Saving is unchanged,
+  // and a click on the backdrop still does nothing.
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 p-4">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="user-modal-title"
-        className="w-full max-w-lg rounded-lg border border-border bg-card p-6 text-foreground shadow-lg max-h-[calc(100dvh-2rem)] overflow-y-auto"
-      >
-        <h2 id="user-modal-title" className="mb-5 section-title">
-          {isEdit ? "Edit User" : "Add User"}
-        </h2>
-
-        <div className="space-y-4">
-          <input
-            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            placeholder="Name"
-            value={form.name}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                name: e.target.value,
-              })
-            }
-          />
-
-          <input
-            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                email: e.target.value,
-              })
-            }
-          />
-
-          <input
-            type="password"
-            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            placeholder={
-              isEdit
-                ? "Leave empty to keep password"
-                : "Password"
-            }
-            value={form.password}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                password: e.target.value,
-              })
-            }
-          />
-
-          <select
-            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            value={form.role}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                role: e.target.value,
-              })
-            }
+    <DialogPrimitive.Root
+      open
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
+    >
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 p-4">
+          <DialogPrimitive.Content
+            aria-modal="true"
+            aria-describedby={undefined}
+            onPointerDownOutside={(e) => e.preventDefault()}
+            onOpenAutoFocus={() => {
+              openerRef.current = document.activeElement as HTMLElement | null;
+            }}
+            onCloseAutoFocus={(e) => {
+              e.preventDefault();
+              openerRef.current?.focus();
+            }}
+            className="w-full max-w-lg rounded-lg border border-border bg-card p-6 text-foreground shadow-lg max-h-[calc(100dvh-2rem)] overflow-y-auto outline-none"
           >
-            <option value="ADMIN">ADMIN</option>
-          </select>
-        </div>
+            <DialogPrimitive.Title className="mb-5 section-title">
+              {isEdit ? "Edit User" : "Add User"}
+            </DialogPrimitive.Title>
 
-        <div className="mt-6 flex justify-end gap-3">
-          <button
-            className="h-9 rounded-lg border border-border px-4 text-sm font-medium transition-colors hover:bg-muted"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
+            <div className="space-y-4">
+              <input
+                className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Name"
+                aria-label="Name"
+                value={form.name}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    name: e.target.value,
+                  })
+                }
+              />
 
-          <Button type="submit" isLoading={loading} onClick={handleSubmit} className="h-9 px-4">
-            {isEdit ? "Update User" : "Create User"}
-          </Button>
-        </div>
-      </div>
-    </div>
+              <input
+                className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Email"
+                aria-label="Email"
+                value={form.email}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    email: e.target.value,
+                  })
+                }
+              />
+
+              <input
+                type="password"
+                className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder={
+                  isEdit
+                    ? "Leave empty to keep password"
+                    : "Password"
+                }
+                aria-label="Password"
+                value={form.password}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    password: e.target.value,
+                  })
+                }
+              />
+
+              <select
+                className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label="Role"
+                value={form.role}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    role: e.target.value,
+                  })
+                }
+              >
+                <option value="ADMIN">ADMIN</option>
+              </select>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                className="h-9 rounded-lg border border-border px-4 text-sm font-medium transition-colors hover:bg-muted"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+
+              <Button type="submit" isLoading={loading} onClick={handleSubmit} className="h-9 px-4">
+                {isEdit ? "Update User" : "Create User"}
+              </Button>
+            </div>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Overlay>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }

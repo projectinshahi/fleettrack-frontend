@@ -1,16 +1,16 @@
+import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeaderSkeleton } from "@/components/ui/skeletons/page-header-skeleton";
 import { TableSkeleton } from "@/components/ui/skeletons/table-skeleton";
 
+// Mirrors the page: header (no action button), the search card, then the vehicle table.
 export default function Loading() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="h-10 w-48 bg-muted animate-pulse rounded-md mb-2"></div>
-          <div className="h-5 w-64 bg-muted animate-pulse rounded-md"></div>
-        </div>
-        <div className="h-10 w-32 bg-muted animate-pulse rounded-lg"></div>
+      <PageHeaderSkeleton />
+      <div className="rounded-lg border border-border bg-card p-5">
+        <Skeleton className="h-10 w-full max-w-md rounded-lg" />
       </div>
-      <TableSkeleton rows={10} />
+      <TableSkeleton columns={7} rows={10} />
     </div>
   );
 }

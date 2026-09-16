@@ -67,12 +67,14 @@ export default function VehicleMap({
   vehicleName,
 }: VehicleMapProps) {
   return (
-    <div className="overflow-hidden rounded-lg">
+    // Fills the box the page gives it (320px below md, 420px from md). A fixed 420px here
+    // overflowed the 320px box on phones and painted over the coordinates below it.
+    <div className="h-full overflow-hidden rounded-lg">
       <MapContainer
         center={[latitude, longitude]}
         zoom={13}
         scrollWheelZoom={true}
-        className="h-[420px] w-full"
+        className="h-full w-full"
       >
         <TileLayer
           attribution="&copy; OpenStreetMap contributors"

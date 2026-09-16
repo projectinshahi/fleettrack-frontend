@@ -269,6 +269,7 @@ export default function Navbar({
       <div className="flex items-center gap-3">
         <button
           onClick={() => setSidebarOpen(true)}
+          aria-label="Open menu"
           className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Menu className="h-4 w-4" />
@@ -280,6 +281,7 @@ export default function Navbar({
             <input
               type="text"
               placeholder="Search dashboard..."
+              aria-label="Search dashboard"
               className="h-9 w-full rounded-lg border border-input bg-muted/40 pl-10 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
@@ -343,7 +345,7 @@ export default function Navbar({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex h-9 items-center gap-2.5 rounded-lg border border-border px-2 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary-ink">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
                 {getInitials()}
               </div>
 

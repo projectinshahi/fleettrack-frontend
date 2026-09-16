@@ -73,7 +73,9 @@ function TripsPageContent() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+      {/* Stacks below sm and the actions wrap: side by side, the two buttons pushed past a
+          360-390px screen. Same pattern as the trip-requests header. */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="rounded-lg bg-primary/10 p-3">
             <RouteIcon className="h-6 w-6 text-primary" />
@@ -87,7 +89,7 @@ function TripsPageContent() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Trips CSV is a CLIENT export (canCreate is the CLIENT capability, the same
               flag the Request Trip button uses), so an ADMIN sees no button here. */}
           {permissions.canCreate && (

@@ -10,7 +10,7 @@ import { STATUS_CHIP, StatusCue } from "@/components/ui/status-chip";
 export default function CustomerTypeBadge({ type }: { type: CustomerType }) {
   return (
     <div
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_CHIP.neutral}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide ${STATUS_CHIP.neutral}`}
     >
       <StatusCue tone="neutral" />
       {type}

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/providers/theme-provider";
 import AuthProvider from "@/providers/auth-provider";
 
@@ -65,12 +65,7 @@ export default function RootLayout({
           <ThemeProvider>
             {children}
 
-            <Toaster
-              position="top-right"
-              richColors
-              closeButton
-              duration={3000}
-            />
+            <Toaster />
           </ThemeProvider>
         </AuthProvider>
       </body>

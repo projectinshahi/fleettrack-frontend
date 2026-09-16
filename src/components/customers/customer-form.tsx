@@ -107,12 +107,14 @@ export default function CustomerForm({
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Customer Name"
+        aria-label="Customer name"
         className={inputClass}
       />
 
       <select
         value={type}
         onChange={(e) => setType(e.target.value as CustomerType)}
+        aria-label="Customer type"
         className={inputClass}
       >
         {CUSTOMER_TYPES.map((t) => (
@@ -129,6 +131,7 @@ export default function CustomerForm({
         value={company}
         onChange={(e) => setCompany(e.target.value)}
         placeholder="Company (optional)"
+        aria-label="Company"
         className={inputClass}
       />
 
@@ -136,6 +139,7 @@ export default function CustomerForm({
         value={contactPerson}
         onChange={(e) => setContactPerson(e.target.value)}
         placeholder="Contact person (optional)"
+        aria-label="Contact person"
         className={inputClass}
       />
 
@@ -143,6 +147,7 @@ export default function CustomerForm({
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email (optional)"
+        aria-label="Email"
         className={inputClass}
       />
 
@@ -150,6 +155,7 @@ export default function CustomerForm({
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
         placeholder="Phone (optional)"
+        aria-label="Phone"
         className={inputClass}
       />
 
@@ -157,6 +163,7 @@ export default function CustomerForm({
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         placeholder="Address (optional)"
+        aria-label="Address"
         className={inputClass}
       />
 
@@ -167,6 +174,7 @@ export default function CustomerForm({
         value={taxId}
         onChange={(e) => setTaxId(e.target.value)}
         placeholder="Tax ID (optional)"
+        aria-label="Tax ID"
         className={inputClass}
       />
 
@@ -174,6 +182,7 @@ export default function CustomerForm({
         value={registrationNumber}
         onChange={(e) => setRegistrationNumber(e.target.value)}
         placeholder="Registration number (optional)"
+        aria-label="Registration number"
         className={inputClass}
       />
 
@@ -185,6 +194,7 @@ export default function CustomerForm({
         onChange={(e) => setNotes(e.target.value)}
         rows={3}
         placeholder="Notes (optional)"
+        aria-label="Notes"
         className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
       />
 

@@ -13,6 +13,7 @@ import { LocateFixed, Minus, Navigation2, Plus } from "lucide-react";
 import { haversineDistance, isValidCoordinate } from "@/lib/gps-utils";
 import VehiclePopupCard from "./vehicle-popup-card";
 import { StatusCue } from "@/components/ui/status-chip";
+import { MapSkeleton } from "@/components/ui/skeletons/map-skeleton";
 
 /* -------------------------------------------------- */
 /* TYPES                                              */
@@ -536,7 +537,7 @@ function LiveStatusCard({ vehicles }: LiveStatusCardProps) {
           <p className="font-heading text-base font-semibold leading-none tabular-nums">
             {moving}
           </p>
-          <p className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-chrome-fg-dim">
+          <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-chrome-fg-dim">
             <StatusCue tone="ok" className="text-status-ok" />
             Moving
           </p>
@@ -548,7 +549,7 @@ function LiveStatusCard({ vehicles }: LiveStatusCardProps) {
           <p className="font-heading text-base font-semibold leading-none tabular-nums">
             {idle}
           </p>
-          <p className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-chrome-fg-dim">
+          <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-chrome-fg-dim">
             <StatusCue tone="attn" className="text-status-attn" />
             Idle
           </p>
@@ -560,7 +561,7 @@ function LiveStatusCard({ vehicles }: LiveStatusCardProps) {
           <p className="font-heading text-base font-semibold leading-none tabular-nums">
             {vehicles.length}
           </p>
-          <p className="mt-1.5 text-[11px] font-medium uppercase tracking-wide text-chrome-fg-dim">
+          <p className="mt-1.5 text-xs font-medium uppercase tracking-wide text-chrome-fg-dim">
             Total
           </p>
         </div>
@@ -599,6 +600,7 @@ function MapControls({
         }
         className={`${MAP_CONTROL} ${MAP_CONTROL_IDLE}`}
         title="Zoom in"
+        aria-label="Zoom in"
       >
         <Plus className="h-4 w-4" />
       </button>
@@ -611,6 +613,7 @@ function MapControls({
         }
         className={`${MAP_CONTROL} ${MAP_CONTROL_IDLE}`}
         title="Zoom out"
+        aria-label="Zoom out"
       >
         <Minus className="h-4 w-4" />
       </button>
@@ -619,6 +622,7 @@ function MapControls({
         onClick={onLocate}
         className={`${MAP_CONTROL} ${MAP_CONTROL_IDLE}`}
         title="Center on vehicle"
+        aria-label="Center on vehicle"
       >
         <LocateFixed className="h-4 w-4" />
       </button>
@@ -633,6 +637,9 @@ function MapControls({
         title={
           followMode ? "Following vehicle (click to stop)" : "Follow vehicle"
         }
+        // A stable name plus the pressed state, so assistive tech announces "on"/"off".
+        aria-label="Follow vehicle"
+        aria-pressed={followMode}
       >
         {/* Filled while following, outlined when not, so the state survives without colour. */}
         <Navigation2 className={`h-4 w-4 ${followMode ? "fill-current" : ""}`} />
@@ -877,9 +884,15 @@ export default function TrackingMap({
   }
 
   if (!isLoaded) {
+    // The same placeholder the route skeleton shows, so the map area doesn't switch from a
+    // pulsing block to text and back while the Maps script loads. Text stays for screen readers.
     return (
-      <div className="relative h-full min-h-[300px] md:min-h-[350px] w-full overflow-hidden flex items-center justify-center bg-muted">
-        <span className="text-muted-foreground text-sm">Loading map…</span>
+      <div
+        role="status"
+        className="relative h-full min-h-[300px] md:min-h-[350px] w-full overflow-hidden"
+      >
+        <MapSkeleton />
+        <span className="sr-only">Loading map…</span>
       </div>
     );
   }
@@ -890,7 +903,7 @@ export default function TrackingMap({
           cue, never the green that means MOVING. */}
       <div className="absolute right-4 top-4 z-[40] flex items-center gap-2 rounded-lg border border-chrome-line bg-chrome-bg px-3 py-1.5">
         <StatusCue tone="signal" className="text-chrome-signal" />
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-chrome-fg">
+        <span className="text-xs font-semibold uppercase tracking-wide text-chrome-fg">
           Live Tracking
         </span>
       </div>

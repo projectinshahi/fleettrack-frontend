@@ -24,7 +24,7 @@ export default function TripProgressCard({ progress, live = false }: Props) {
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-semibold">Route progress</h3>
           {live && (
-            <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_CHIP.signal}`}>
+            <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-bold uppercase tracking-wider ${STATUS_CHIP.signal}`}>
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-75" />
                 <span className="relative inline-flex h-full w-full rounded-full bg-current" />

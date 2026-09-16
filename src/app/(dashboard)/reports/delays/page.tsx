@@ -96,8 +96,8 @@ export default function DelayReportPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-primary/10 p-3">
-            <Clock className="h-6 w-6 text-primary" />
+          <div className="rounded-lg border border-border bg-card p-3">
+            <Clock className="h-6 w-6 text-muted-foreground" />
           </div>
           <div>
             <h1 className="page-title">Delay Report</h1>
@@ -124,6 +124,7 @@ export default function DelayReportPage() {
             Group by
           </label>
           <select
+            aria-label="Group by"
             value={period}
             onChange={(e) => setPeriod(e.target.value as DelayPeriod)}
             className={inputClass}
@@ -139,6 +140,7 @@ export default function DelayReportPage() {
           </label>
           <input
             type="date"
+            aria-label="From"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
             className={inputClass}
@@ -148,6 +150,7 @@ export default function DelayReportPage() {
           <label className="text-xs font-medium text-muted-foreground">To</label>
           <input
             type="date"
+            aria-label="To"
             value={to}
             onChange={(e) => setTo(e.target.value)}
             className={inputClass}

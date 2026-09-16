@@ -76,6 +76,7 @@ export default function VehicleList({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search vehicles..."
+            aria-label="Search vehicles"
             className="h-9 w-full rounded-lg border border-input bg-muted/40 pl-9 pr-3 text-xs text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring focus:bg-background"
           />
         </div>
@@ -102,7 +103,7 @@ export default function VehicleList({
             <div>
               <h3 className="text-[13px] font-semibold leading-none text-foreground">All Vehicles</h3>
 
-              <p className="mt-1.5 text-[11px] text-muted-foreground font-medium">
+              <p className="mt-1.5 text-xs text-muted-foreground font-medium">
                 Show all active units
               </p>
             </div>
@@ -112,7 +113,7 @@ export default function VehicleList({
             </div>
           </div>
 
-          <div className="mt-3.5 flex items-center gap-3.5 text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+          <div className="mt-3.5 flex items-center gap-3.5 text-xs text-muted-foreground font-semibold uppercase tracking-wider">
             <div>
               <span className="font-bold text-foreground">
                 {vehicles.length}

@@ -85,7 +85,7 @@ export default function FileThumb({ file, canDelete, onDelete }: Props) {
             className="flex flex-col items-center gap-1 text-muted-foreground transition hover:text-foreground"
           >
             <FileText className="h-8 w-8" />
-            <span className="flex items-center gap-1 text-[10px] font-medium">
+            <span className="flex items-center gap-1 text-xs font-medium">
               <ExternalLink className="h-3 w-3" /> Open
             </span>
           </button>
@@ -94,7 +94,7 @@ export default function FileThumb({ file, canDelete, onDelete }: Props) {
 
       <div className="flex items-center justify-between gap-1 border-t border-border bg-card px-2 py-1.5">
         <span
-          className="truncate text-[11px] text-muted-foreground"
+          className="truncate text-xs text-muted-foreground"
           title={file.originalName}
         >
           {file.originalName}

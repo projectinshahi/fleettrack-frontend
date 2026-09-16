@@ -93,6 +93,7 @@ export default function AddressForm({
       <select
         value={kind}
         onChange={(e) => setKind(e.target.value as AddressKind)}
+        aria-label="Address type"
         className={inputClass}
       >
         {ADDRESS_KINDS.map((k) => (
@@ -106,6 +107,7 @@ export default function AddressForm({
         value={label}
         onChange={(e) => setLabel(e.target.value)}
         placeholder="Label (e.g. Warehouse, Head Office)"
+        aria-label="Label"
         className={inputClass}
       />
 
@@ -113,6 +115,7 @@ export default function AddressForm({
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         placeholder="Address"
+        aria-label="Address"
         className={inputClass}
       />
 
@@ -121,6 +124,7 @@ export default function AddressForm({
           value={latitude}
           onChange={(e) => setLatitude(e.target.value)}
           placeholder="Latitude (optional)"
+          aria-label="Latitude"
           inputMode="decimal"
           className={inputClass}
         />
@@ -128,6 +132,7 @@ export default function AddressForm({
           value={longitude}
           onChange={(e) => setLongitude(e.target.value)}
           placeholder="Longitude (optional)"
+          aria-label="Longitude"
           inputMode="decimal"
           className={inputClass}
         />

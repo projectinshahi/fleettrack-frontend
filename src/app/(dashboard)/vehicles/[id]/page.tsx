@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { apiFetch } from "@/lib/fetcher";
-import { DetailSkeleton } from "@/components/ui/skeletons/detail-skeleton";
+import { VehicleDetailSkeleton } from "@/components/ui/skeletons/detail-skeleton";
 import { ErrorState } from "@/components/ui/error-state";
 import VehicleStatusBadge from "@/components/vehicles/vehicle-status-badge";
 import { useAuthStore } from "@/store/auth-store";
@@ -139,7 +139,7 @@ export default function VehicleDetailPage() {
   }, [params.id]);
 
   if (loading) {
-    return <DetailSkeleton />;
+    return <VehicleDetailSkeleton />;
   }
 
   if (error) {

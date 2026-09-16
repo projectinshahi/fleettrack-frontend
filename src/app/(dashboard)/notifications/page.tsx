@@ -46,12 +46,18 @@ export default function NotificationsPage() {
 
       <div className="overflow-hidden rounded-lg border border-border bg-card">
         {loading ? (
-          <div className="space-y-4 p-6">
-            <Skeleton className="h-16 w-full" />
-            <Skeleton className="h-16 w-full" />
-            <Skeleton className="h-16 w-full" />
-            <Skeleton className="h-16 w-full" />
-            <Skeleton className="h-16 w-full" />
+          // Same rows as notifications/loading.tsx, so the route and page placeholders match
+          // the real list (icon + title + time) instead of switching shape mid-load.
+          <div className="divide-y divide-border">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-3 p-4">
+                <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4 max-w-full" />
+                  <Skeleton className="h-3 w-1/2 max-w-full" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : error && notifications.length === 0 ? (
           <ErrorState message="Couldn't load notifications." onRetry={reload} />

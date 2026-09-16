@@ -52,9 +52,12 @@ export default function VehiclePopupCard({
     //
     // Map chrome: the card floats over Google's tiles, so it wears the fixed dark layer in
     // both themes. It keeps its shadow because it genuinely floats above the markers.
+    //
+    // font-sans: the card is mounted inside Google's .gm-style, which sets Roboto for
+    // everything under it; the identifier lines keep their own font-mono.
     <div
       onClick={(e) => e.stopPropagation()}
-      className="w-[248px] select-none rounded-lg border border-chrome-line bg-chrome-bg text-chrome-fg shadow-lg animate-in fade-in-50 zoom-in-95 duration-150"
+      className="w-[248px] select-none font-sans rounded-lg border border-chrome-line bg-chrome-bg text-chrome-fg shadow-lg animate-in fade-in-50 zoom-in-95 duration-150"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2 px-3 pt-3">
@@ -62,7 +65,7 @@ export default function VehiclePopupCard({
           <h3 className="truncate font-mono text-[13px] font-semibold leading-none text-chrome-fg">
             {vehicle.vehicleNumber}
           </h3>
-          <p className="mt-1.5 truncate text-[11px] font-semibold text-chrome-fg-dim">
+          <p className="mt-1.5 truncate text-xs font-semibold text-chrome-fg-dim">
             {vehicle.driverName}
           </p>
         </div>
@@ -79,7 +82,7 @@ export default function VehiclePopupCard({
       {/* Status + speed */}
       <div className="mt-3 flex items-center justify-between gap-2 px-3">
         <span
-          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_CHIP[tone]}`}
+          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-bold uppercase tracking-wide ${STATUS_CHIP[tone]}`}
         >
           <StatusCue tone={tone} />
           {vehicle.status}
@@ -93,7 +96,7 @@ export default function VehiclePopupCard({
         ) : (
           <p className="text-[13px] font-semibold tabular-nums text-chrome-fg">
             {roundSpeed(vehicle.speed)}{" "}
-            <span className="text-[10px] font-semibold text-chrome-fg-dim">
+            <span className="text-xs font-semibold text-chrome-fg-dim">
               km/h
             </span>
           </p>
@@ -101,7 +104,7 @@ export default function VehiclePopupCard({
       </div>
 
       {/* Facts */}
-      <dl className="mt-3 space-y-1.5 border-t border-chrome-line px-3 pt-2.5 text-[11px]">
+      <dl className="mt-3 space-y-1.5 border-t border-chrome-line px-3 pt-2.5 text-xs">
         {vehicle.client?.name && (
           <div className="flex items-baseline justify-between gap-3">
             <dt className="font-semibold text-chrome-fg-dim">Client</dt>
@@ -143,7 +146,7 @@ export default function VehiclePopupCard({
         {user?.role === "CLIENT" && (
           <Link
             href="/trips"
-            className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-chrome-line bg-chrome-bg text-[11px] font-bold text-chrome-fg transition-colors hover:bg-chrome-bg-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-chrome-signal"
+            className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-chrome-line bg-chrome-bg text-xs font-bold text-chrome-fg transition-colors hover:bg-chrome-bg-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-chrome-signal"
           >
             <Route className="h-3.5 w-3.5 text-chrome-fg-dim" />
             Trips
@@ -152,7 +155,7 @@ export default function VehiclePopupCard({
 
         <button
           onClick={onCenterMap}
-          className="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-chrome-line bg-chrome-bg text-[11px] font-bold text-chrome-fg outline-none transition-colors hover:bg-chrome-bg-2 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-chrome-signal"
+          className="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-chrome-line bg-chrome-bg text-xs font-bold text-chrome-fg outline-none transition-colors hover:bg-chrome-bg-2 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-chrome-signal"
         >
           <LocateFixed className="h-3.5 w-3.5 text-chrome-fg-dim" />
           Center

@@ -120,7 +120,9 @@ export default function PodSignature({ tripId, canEdit }: Props) {
           </p>
         )
       ) : (
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        // A saved signature is dark ink on a transparent PNG, so its preview gets the same
+        // light paper as the pad in dark mode, and is shown whole rather than cropped.
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 [&_img]:object-contain dark:[&_img]:bg-foreground">
           {files.map((file) => (
             <FileThumb
               key={file.id}
@@ -142,7 +144,11 @@ export default function PodSignature({ tripId, canEdit }: Props) {
             onPointerMove={handleMove}
             onPointerUp={handleUp}
             onPointerLeave={handleUp}
-            className="w-full max-w-md touch-none rounded-lg border border-dashed border-border bg-muted/30"
+            role="img"
+            aria-label="Signature pad"
+            // The ink is a fixed dark colour (it is what the saved PNG holds), so the pad stays
+            // light paper in dark mode: the foreground token is the light inverse surface there.
+            className="w-full max-w-md touch-none rounded-lg border border-dashed border-border bg-muted/30 dark:bg-foreground"
           />
           <div className="mt-2 flex items-center gap-2">
             <Button
@@ -164,7 +170,7 @@ export default function PodSignature({ tripId, canEdit }: Props) {
               <Eraser className="h-3.5 w-3.5" />
               Clear
             </button>
-            <span className="ml-auto flex items-center gap-1 text-[11px] text-muted-foreground">
+            <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
               <PenLine className="h-3 w-3" />
               Sign above
             </span>

@@ -165,6 +165,9 @@ export default function TrackingPage() {
   // Google Maps instances and three sets of markers were live at once with two hidden.
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background md:flex-row">
+      {/* The map is the page, so its heading is for assistive technology only. */}
+      <h1 className="sr-only">Live tracking</h1>
+
       {/* MOBILE VEHICLE PICKER (< md) — the sidebar is too wide for a phone */}
       <div className="z-30 border-b border-border bg-background p-3.5 md:hidden">
         <CustomSelect

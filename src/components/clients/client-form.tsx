@@ -134,6 +134,7 @@ export default function ClientForm({
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Client Name"
+        aria-label="Client name"
         className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
       />
 
@@ -141,6 +142,7 @@ export default function ClientForm({
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email / Username"
+        aria-label="Email or username"
         className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
       />
 
@@ -151,6 +153,7 @@ export default function ClientForm({
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
+            aria-label="Password"
             className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-10"
           />
           <button

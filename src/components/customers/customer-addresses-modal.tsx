@@ -197,12 +197,12 @@ export default function CustomerAddressesModal({
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-sm font-medium">{a.label}</span>
-                      <span className="rounded-full border border-border px-2 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
+                      <span className="rounded-full border border-border px-2 py-0.5 text-xs font-bold uppercase text-muted-foreground">
                         {a.kind}
                       </span>
                       {a.isDefault && (
                         <span
-                          className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase ${STATUS_CHIP.ok}`}
+                          className={`rounded-full border px-2 py-0.5 text-xs font-bold uppercase ${STATUS_CHIP.ok}`}
                         >
                           Default
                         </span>

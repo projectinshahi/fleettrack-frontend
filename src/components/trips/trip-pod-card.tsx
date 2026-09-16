@@ -95,7 +95,7 @@ export default function TripPodCard({ tripId, canEdit }: Props) {
           <PackageCheck className="h-4 w-4 text-muted-foreground" />
           <h3 className="text-sm font-semibold">Proof of Delivery</h3>
           {confirmed && (
-            <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_CHIP.ok}`}>
+            <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-bold uppercase tracking-wide ${STATUS_CHIP.ok}`}>
               <CheckCircle2 className="h-3 w-3" />
               Confirmed
             </span>
@@ -105,7 +105,7 @@ export default function TripPodCard({ tripId, canEdit }: Props) {
           <button
             type="button"
             onClick={openEdit}
-            className="text-sm font-medium text-primary hover:underline"
+            className="text-sm font-medium text-primary-ink hover:underline"
           >
             {confirmed ? "Edit" : "Confirm delivery"}
           </button>
@@ -134,6 +134,7 @@ export default function TripPodCard({ tripId, canEdit }: Props) {
                   value={recipientName}
                   onChange={(e) => setRecipientName(e.target.value)}
                   placeholder="Recipient name"
+                  aria-label="Received by"
                   className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </div>
@@ -146,6 +147,7 @@ export default function TripPodCard({ tripId, canEdit }: Props) {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
                   placeholder="Delivery notes (optional)"
+                  aria-label="Notes"
                   className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </div>

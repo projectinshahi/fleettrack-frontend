@@ -193,6 +193,9 @@ function NavLink({
       // this is what announces it to a screen reader. Nothing reads this attribute, so
       // navigation behaviour is unaffected.
       aria-current={active ? "page" : undefined}
+      // The collapsed rail hides the label (display: none), which took the link's name with
+      // it. The same text as the label, so nothing changes when it is showing.
+      aria-label={title}
       className={`
         relative flex h-10 items-center gap-3.5 rounded-lg px-3.5
         transition-all duration-200 group/navlink
@@ -270,7 +273,7 @@ export default function Sidebar({
           }
         }}
         className={`
-          fixed left-0 top-0 z-[100] flex h-dvh flex-col
+          fixed left-0 top-0 z-[100] flex h-screen supports-[height:100dvh]:h-dvh flex-col
           border-r border-border
           bg-card
           text-card-foreground
@@ -297,7 +300,8 @@ export default function Sidebar({
                 expanded ? "opacity-100 translate-x-0 lg:block" : "opacity-0 -translate-x-4 lg:hidden"
               } block`}
             >
-              <h1 className="text-base font-semibold tracking-tight leading-none text-foreground">FleetTrack</h1>
+              {/* Not a heading: each page supplies its own h1, and a wordmark h1 here made two. */}
+              <p className="text-base font-semibold tracking-tight leading-none text-foreground">FleetTrack</p>
 
               <p className="text-xs text-muted-foreground mt-0.5 font-medium tracking-wider uppercase">GPS Portal</p>
             </div>
@@ -307,6 +311,7 @@ export default function Sidebar({
           <button
             className="lg:hidden flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={() => setSidebarOpen(false)}
+            aria-label="Close menu"
           >
             <X className="h-4 w-4" />
           </button>
@@ -332,6 +337,7 @@ export default function Sidebar({
                       type="button"
                       onClick={() => setReportsOpen((open) => !open)}
                       aria-expanded={reportsExpanded}
+                      aria-label={item.title}
                       className={`
                         relative flex h-10 w-full items-center gap-3.5 rounded-lg px-3.5
                         transition-all duration-200 group/navlink

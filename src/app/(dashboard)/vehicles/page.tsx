@@ -31,6 +31,7 @@ export default function VehiclesPage() {
             <input
               type="text"
               placeholder="Search by vehicle number, name, or driver..."
+              aria-label="Search vehicles"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-10 w-full rounded-lg border border-input bg-muted/40 pl-10 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring focus:bg-background"

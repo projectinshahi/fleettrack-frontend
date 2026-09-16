@@ -109,11 +109,13 @@ export default function TripCostModal({ open, onClose, cost, onSave }: Props) {
 
           {COST_COMPONENT_META.map((c) => (
             <div key={c.key} className="flex items-center gap-3">
-              <label className="flex-1 text-sm font-medium">{c.label}</label>
+              {/* One row label for two inputs, so each input carries its own name. */}
+              <span className="flex-1 text-sm font-medium">{c.label}</span>
               <input
                 type="number"
                 min={0}
                 step="0.01"
+                aria-label={`${c.label} estimated`}
                 value={values[c.estimatedField]}
                 onChange={(e) => set(c.estimatedField, e.target.value)}
                 className={inputClass}
@@ -122,6 +124,7 @@ export default function TripCostModal({ open, onClose, cost, onSave }: Props) {
                 type="number"
                 min={0}
                 step="0.01"
+                aria-label={`${c.label} actual`}
                 value={values[c.actualField]}
                 onChange={(e) => set(c.actualField, e.target.value)}
                 className={inputClass}

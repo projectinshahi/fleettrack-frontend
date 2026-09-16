@@ -7,7 +7,7 @@ import TrackingMap from "@/components/tracking/tracking-map";
 import VehicleDetails from "@/components/tracking/vehicle-details";
 import { socket } from "@/lib/socket";
 import { acceptVehiclePacket, mergeVehicleUpdate } from "@/lib/vehicle-update";
-import { DetailSkeleton } from "@/components/ui/skeletons/detail-skeleton";
+import { TrackingDetailSkeleton } from "@/components/ui/skeletons/detail-skeleton";
 
 interface Vehicle {
   id: string;
@@ -104,11 +104,7 @@ export default function SingleTrackingPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="h-full overflow-y-auto p-4 sm:p-6">
-        <DetailSkeleton />
-      </div>
-    );
+    return <TrackingDetailSkeleton />;
   }
 
   if (error) {
@@ -139,9 +135,12 @@ export default function SingleTrackingPage() {
 
   return (
     <div className="relative h-full overflow-hidden bg-background">
+      <h1 className="sr-only">Live tracking: {vehicle.vehicleNumber}</h1>
+
       {/* MOBILE VIEW (< 768px / md) */}
       <div className="flex h-full flex-col md:hidden">
-        {/* Map Area */}
+        {/* Map Area — ends where the sheet begins, so the map controls, the live status card
+            and Google's logo and attribution all stay visible above it. */}
         <div className="relative flex-1 overflow-hidden min-h-[300px]">
           <TrackingMap
             vehicles={[vehicle]}
@@ -150,19 +149,19 @@ export default function SingleTrackingPage() {
           />
         </div>
 
-        {/* Mobile bottom sheet drawer details */}
-        <div className="absolute bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom duration-300">
-          {/* A floating sheet over the map, so it keeps a shadow. The shadow is cast UPWARD
-              because the sheet rises from the bottom edge, which no shadow-* utility does:
-              the one arbitrary shadow in the app. Solid card fill, no blur. */}
-          <div className="w-full rounded-t-lg border-t border-border bg-card shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
+        {/* Mobile bottom sheet drawer details. In the column flow rather than absolutely
+            positioned over the map: overlaid, it covered the bottom 300+px of the map. It
+            shrinks (and its body scrolls) on short screens before the map drops below 300px. */}
+        <div className="flex min-h-0 flex-col animate-in slide-in-from-bottom duration-300">
+          {/* The shadow is cast UPWARD because the sheet rises from the bottom edge, which no
+              shadow-* utility does: the one arbitrary shadow in the app. Solid card fill, no blur. */}
+          <div className="flex min-h-0 w-full flex-col rounded-t-lg border-t border-border bg-card shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
             {/* Drag Handle */}
-            <div className="w-12 h-1.5 bg-muted rounded-full mx-auto my-3" />
-            <div className="slim-scrollbar max-h-[50vh] overflow-y-auto px-4 pb-8">
+            <div className="w-12 h-1.5 shrink-0 bg-muted rounded-full mx-auto my-3" />
+            <div className="slim-scrollbar min-h-0 max-h-[50vh] overflow-y-auto px-4 pb-8">
               <VehicleDetails
                 vehicle={vehicle}
                 onCenterMap={handleCenterMap}
-                onClose={() => {}}
                 mobile
               />
             </div>
@@ -186,7 +185,6 @@ export default function SingleTrackingPage() {
           <VehicleDetails
             vehicle={vehicle}
             onCenterMap={handleCenterMap}
-            onClose={() => {}}
           />
         </div>
       </div>

@@ -110,6 +110,7 @@ export default function ClientsPage() {
           <input
             type="text"
             placeholder="Search clients..."
+            aria-label="Search clients"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-10 w-full rounded-lg border border-border bg-muted/40 pl-10 pr-4 text-sm"

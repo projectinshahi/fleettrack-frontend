@@ -107,7 +107,7 @@ export default function NotificationItem({ notification, onMarkRead }: Props) {
         <p className="mt-0.5 text-xs text-muted-foreground">
           {notification.message}
         </p>
-        <p className="mt-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+        <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
           {timeAgo(notification.createdAt)}
         </p>
       </div>

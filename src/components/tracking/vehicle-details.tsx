@@ -41,7 +41,8 @@ interface Vehicle {
 interface VehicleDetailsProps {
   vehicle: Vehicle;
   onCenterMap: () => void;
-  onClose: () => void;
+  /** Optional: the close button renders only when there is something to close. */
+  onClose?: () => void;
   mobile?: boolean;
 }
 
@@ -72,6 +73,7 @@ export default function VehicleDetails({
         {onClose && (
           <button
             onClick={onClose}
+            aria-label="Close vehicle details"
             className="
               flex h-8 w-8 items-center justify-center
               rounded-lg border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground
@@ -87,13 +89,13 @@ export default function VehicleDetails({
 
       <div className="grid grid-cols-2 gap-3.5">
         <div className="rounded-lg border border-border bg-muted/30 p-3.5">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Status</p>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Status</p>
 
           <div className="mt-2.5">
             <span
               className={`
                 inline-flex items-center gap-1.5 rounded-full
-                px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase border
+                px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase border
 
                 ${STATUS_CHIP[statusTone(vehicle.status)]}
               `}
@@ -107,7 +109,7 @@ export default function VehicleDetails({
         {/* Offline has no current speed — the label switches to "Last speed" so the
             number is never read as a live reading. Same rule as VehicleCard/popup. */}
         <div className="rounded-lg border border-border bg-muted/30 p-3.5">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             {offline ? "Last speed" : "Speed"}
           </p>
 
@@ -116,20 +118,20 @@ export default function VehicleDetails({
           </p>
 
           {offline && (
-            <p className="mt-1 text-[10px] font-semibold text-muted-foreground">
+            <p className="mt-1 text-xs font-semibold text-muted-foreground">
               Last seen {formatFixTime(vehicle)}
             </p>
           )}
         </div>
 
         <div className="rounded-lg border border-border bg-muted/30 p-3.5">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Client</p>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Client</p>
 
           <p className="mt-2 text-xs font-bold text-foreground truncate">{vehicle.client?.name ?? vehicle.clientName ?? "—"}</p>
         </div>
 
         <div className="rounded-lg border border-border bg-muted/30 p-3.5">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">GPS Device</p>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">GPS Device</p>
 
           <p className="mt-2 font-mono text-xs font-semibold text-foreground truncate">{vehicle.gpsDeviceId}</p>
         </div>

@@ -15,6 +15,7 @@ import TripStopsModal from "@/components/trips/trip-stops-modal";
 import TripTimeline from "@/components/trips/trip-timeline";
 import TripMonitoringPanel from "@/components/trips/trip-monitoring-panel";
 import TripPlayback from "@/components/trips/trip-playback";
+import { TripDetailSkeleton } from "@/components/ui/skeletons/detail-skeleton";
 
 export default function TripDetailPage() {
   const params = useParams();
@@ -49,7 +50,7 @@ export default function TripDetailPage() {
       </Link>
 
       {loading ? (
-        <p className="text-muted-foreground">Loading trip...</p>
+        <TripDetailSkeleton backLink={false} />
       ) : error || !trip ? (
         <p className="text-muted-foreground">{error ?? "Trip not found"}</p>
       ) : (

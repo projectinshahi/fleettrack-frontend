@@ -76,7 +76,7 @@ export default function TripOptimizationPanel({
               <li key={stop.originalIndex} className="truncate">
                 {i + 1}. {stop.address}
                 {stop.originalIndex !== i && (
-                  <span className="ml-1 text-[10px] text-muted-foreground">
+                  <span className="ml-1 text-xs text-muted-foreground">
                     (was #{stop.originalIndex + 1})
                   </span>
                 )}

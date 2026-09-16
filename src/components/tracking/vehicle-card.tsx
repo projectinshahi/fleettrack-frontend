@@ -65,13 +65,13 @@ export default function VehicleCard({
             {vehicle.vehicleNumber}
           </h3>
 
-          <p className="mt-1.5 truncate text-[11px] font-semibold text-muted-foreground">
+          <p className="mt-1.5 truncate text-xs font-semibold text-muted-foreground">
             {vehicle.driverName}
           </p>
         </div>
 
         <span
-          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase border ${STATUS_CHIP[tone]}`}
+          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold tracking-wide uppercase border ${STATUS_CHIP[tone]}`}
         >
           <StatusCue tone={tone} />
           {vehicle.status}
@@ -81,7 +81,7 @@ export default function VehicleCard({
       {/* An offline vehicle has no CURRENT speed — only a last known one. Showing that
           number here unqualified is what made "OFFLINE · 69 km/h" read as live. The
           value isn't hidden, it moves to the "Last seen" line where it belongs. */}
-      <div className="mt-3 flex items-center gap-3.5 text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+      <div className="mt-3 flex items-center gap-3.5 text-xs text-muted-foreground font-semibold uppercase tracking-wider">
         <div className="flex items-center gap-1">
           <Gauge className="h-3.5 w-3.5" />
           <span>{offline ? "—" : formatSpeed(vehicle.speed)}</span>

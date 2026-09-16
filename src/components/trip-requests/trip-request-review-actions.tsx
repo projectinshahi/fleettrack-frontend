@@ -171,6 +171,7 @@ export default function TripRequestReviewActions({
               onChange={(e) => setReason(e.target.value)}
               rows={3}
               placeholder="Reason for rejection (required)"
+              aria-label="Reason for rejection"
               className="mt-3 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             />
           </>

@@ -126,10 +126,9 @@ export default function TripRouteMap({
 
   if (loading || !isLoaded) {
     return (
-      <div
-        className={`${WRAPPER_CLASS} flex items-center justify-center bg-muted`}
-      >
-        <span className="text-sm text-muted-foreground">Loading map…</span>
+      // A pulsing placeholder in the map's own frame, like every other loading state.
+      <div role="status" className={`${WRAPPER_CLASS} animate-pulse bg-border/60`}>
+        <span className="sr-only">Loading map…</span>
       </div>
     );
   }
@@ -227,7 +226,7 @@ export default function TripRouteMap({
       {/* Legend — map chrome, the same fixed dark layer as the tracking map's overlays. The
           swatches repeat each marker's SHAPE (filled, small, hollow, diamond), which is the
           encoding; on the dark chrome the fills are drawn light. */}
-      <div className="absolute left-3 top-3 z-[5] flex flex-col gap-1.5 rounded-lg border border-chrome-line bg-chrome-bg px-3 py-2 text-[11px] font-medium text-chrome-fg">
+      <div className="absolute left-3 top-3 z-[5] flex flex-col gap-1.5 rounded-lg border border-chrome-line bg-chrome-bg px-3 py-2 text-xs font-medium text-chrome-fg">
         <span className="flex items-center gap-2">
           <span aria-hidden className="flex w-3 justify-center">
             <span className="size-2.5 rounded-full bg-chrome-fg" />

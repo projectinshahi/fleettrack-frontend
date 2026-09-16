@@ -20,7 +20,11 @@ export default function TripDeviationAlert({ progress }: Props) {
   if (!progress?.isDeviating) return null;
 
   return (
-    <div className={`flex items-start gap-3 rounded-lg border p-4 ${STATUS_CHIP.attn}`}>
+    // Appears mid-trip from live updates, so it is announced when it shows up.
+    <div
+      role="alert"
+      className={`flex items-start gap-3 rounded-lg border p-4 ${STATUS_CHIP.attn}`}
+    >
       <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
       <div>
         <p className="text-sm font-semibold">

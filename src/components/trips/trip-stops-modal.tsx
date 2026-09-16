@@ -150,7 +150,7 @@ export default function TripStopsModal({ open, onClose, trip, onSave }: Props) {
           {/* Stops (ordered — max 10) */}
           <div>
             <div className="mb-1 flex items-center justify-between">
-              <label className="text-sm font-medium">Stops</label>
+              <span className="text-sm font-medium">Stops</span>
               <span className="text-xs text-muted-foreground">
                 {stops.length}/{MAX_TRIP_STOPS}
               </span>
@@ -171,6 +171,7 @@ export default function TripStopsModal({ open, onClose, trip, onSave }: Props) {
                         )
                       }
                       placeholder={`Stop ${index + 1} address`}
+                      aria-label={`Stop ${index + 1} address`}
                       className={inputClass}
                     />
                     <button
@@ -244,7 +245,7 @@ export default function TripStopsModal({ open, onClose, trip, onSave }: Props) {
           {/* Route preview (geocoded) */}
           <div>
             <div className="mb-1 flex items-center justify-between">
-              <label className="text-sm font-medium">Route preview</label>
+              <span className="text-sm font-medium">Route preview</span>
               <button
                 type="button"
                 onClick={() => previewOrder(stops)}

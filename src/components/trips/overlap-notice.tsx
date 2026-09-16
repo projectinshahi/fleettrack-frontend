@@ -36,9 +36,11 @@ export default function OverlapNotice({
 
   const resource = label.toLowerCase();
 
+  // The check runs after the user picks a resource and dates, so each outcome is announced:
+  // progress and "available" politely, a conflict as an alert.
   if (checking) {
     return (
-      <p className="text-xs text-muted-foreground">
+      <p role="status" className="text-xs text-muted-foreground">
         Checking {resource} availability…
       </p>
     );
@@ -46,7 +48,7 @@ export default function OverlapNotice({
 
   if (hasOverlap) {
     return (
-      <div className={`rounded-lg border p-3 ${STATUS_CHIP.fault}`}>
+      <div role="alert" className={`rounded-lg border p-3 ${STATUS_CHIP.fault}`}>
         <p className="text-sm font-medium">
           This {resource} is already booked for an overlapping schedule:
         </p>
@@ -63,7 +65,7 @@ export default function OverlapNotice({
   }
 
   return (
-    <p className="flex items-center gap-1.5 text-xs font-medium text-status-ok-ink">
+    <p role="status" className="flex items-center gap-1.5 text-xs font-medium text-status-ok-ink">
       <StatusCue tone="ok" className="text-status-ok" />
       {label} is available for this schedule.
     </p>

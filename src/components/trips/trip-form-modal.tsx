@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { toast } from "sonner";
 import { ChevronDown, ChevronUp, Plus, Sparkles, X } from "lucide-react";
 
@@ -60,6 +60,8 @@ export default function TripFormModal({
 }: Props) {
   const isAdmin = mode === "admin-create";
   const { user } = useAuthStore();
+  // Prefix for the label/control id pairs below (unique per mounted form).
+  const fieldId = useId();
 
   // ADMIN direct-create: the selected client whose resources the form operates on.
   // Empty until the admin picks one; every resource selector stays disabled until then.
@@ -299,8 +301,9 @@ export default function TripFormModal({
               selector below and becomes the trip's owning client. */}
           {isAdmin && (
             <div>
-              <label className="mb-1 block text-sm font-medium">Client</label>
+              <label htmlFor={`${fieldId}-client`} className="mb-1 block text-sm font-medium">Client</label>
               <select
+                id={`${fieldId}-client`}
                 value={adminClientId}
                 onChange={(e) => {
                   setAdminClientId(e.target.value);
@@ -330,8 +333,9 @@ export default function TripFormModal({
           )}
 
           <div>
-            <label className="mb-1 block text-sm font-medium">Reference</label>
+            <label htmlFor={`${fieldId}-reference`} className="mb-1 block text-sm font-medium">Reference</label>
             <input
+              id={`${fieldId}-reference`}
               value={reference}
               onChange={(e) => setReference(e.target.value)}
               placeholder="TRIP-2026-0001"
@@ -341,10 +345,11 @@ export default function TripFormModal({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium">
+              <label htmlFor={`${fieldId}-pickup`} className="mb-1 block text-sm font-medium">
                 Pickup address
               </label>
               <input
+                id={`${fieldId}-pickup`}
                 value={pickup}
                 onChange={(e) => setPickup(e.target.value)}
                 placeholder="Pickup location"
@@ -352,10 +357,11 @@ export default function TripFormModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium">
+              <label htmlFor={`${fieldId}-delivery`} className="mb-1 block text-sm font-medium">
                 Delivery address
               </label>
               <input
+                id={`${fieldId}-delivery`}
                 value={delivery}
                 onChange={(e) => setDelivery(e.target.value)}
                 placeholder="Delivery location"
@@ -367,7 +373,7 @@ export default function TripFormModal({
           {/* Stops (optional, ordered — max 10) */}
           <div>
             <div className="mb-1 flex items-center justify-between">
-              <label className="text-sm font-medium">Stops (optional)</label>
+              <span className="text-sm font-medium">Stops (optional)</span>
               <span className="text-xs text-muted-foreground">
                 {stops.length}/{MAX_TRIP_STOPS}
               </span>
@@ -388,6 +394,7 @@ export default function TripFormModal({
                         )
                       }
                       placeholder={`Stop ${index + 1} address`}
+                      aria-label={`Stop ${index + 1} address`}
                       className={inputClass}
                     />
                     <button
@@ -460,10 +467,11 @@ export default function TripFormModal({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium">
+              <label htmlFor={`${fieldId}-start`} className="mb-1 block text-sm font-medium">
                 Planned start
               </label>
               <input
+                id={`${fieldId}-start`}
                 type="datetime-local"
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
@@ -471,10 +479,11 @@ export default function TripFormModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium">
+              <label htmlFor={`${fieldId}-end`} className="mb-1 block text-sm font-medium">
                 Planned end
               </label>
               <input
+                id={`${fieldId}-end`}
                 type="datetime-local"
                 value={end}
                 onChange={(e) => setEnd(e.target.value)}
@@ -485,8 +494,9 @@ export default function TripFormModal({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium">Vehicle</label>
+              <label htmlFor={`${fieldId}-vehicle`} className="mb-1 block text-sm font-medium">Vehicle</label>
               <select
+                id={`${fieldId}-vehicle`}
                 value={vehicleId}
                 onChange={(e) => setVehicleId(e.target.value)}
                 disabled={optionsLoading || (isAdmin && !adminClientId)}
@@ -509,10 +519,11 @@ export default function TripFormModal({
                 enters one in the approval modal when the request is reviewed. */}
             {isAdmin && (
               <div>
-                <label className="mb-1 block text-sm font-medium">
+                <label htmlFor={`${fieldId}-driver-name`} className="mb-1 block text-sm font-medium">
                   Driver Name <span className="text-destructive">*</span>
                 </label>
                 <input
+                  id={`${fieldId}-driver-name`}
                   value={driverName}
                   onChange={(e) => setDriverName(e.target.value)}
                   placeholder="e.g. Ravi Kumar"
@@ -524,10 +535,11 @@ export default function TripFormModal({
 
           {isAdmin && (
             <div>
-              <label className="mb-1 block text-sm font-medium">
+              <label htmlFor={`${fieldId}-driver-phone`} className="mb-1 block text-sm font-medium">
                 Driver Phone <span className="text-destructive">*</span>
               </label>
               <input
+                id={`${fieldId}-driver-phone`}
                 value={driverPhone}
                 onChange={(e) => setDriverPhone(e.target.value)}
                 placeholder="e.g. +91 98765 43210"
@@ -538,10 +550,11 @@ export default function TripFormModal({
 
           {/* Customer (optional) — links the trip to a customer (CUS-07.1) */}
           <div>
-            <label className="mb-1 block text-sm font-medium">
+            <label htmlFor={`${fieldId}-customer`} className="mb-1 block text-sm font-medium">
               Customer (optional)
             </label>
             <select
+              id={`${fieldId}-customer`}
               value={customerId}
               onChange={(e) => setCustomerId(e.target.value)}
               disabled={customersLoading || (isAdmin && !adminClientId)}
@@ -570,10 +583,11 @@ export default function TripFormModal({
           />
 
           <div>
-            <label className="mb-1 block text-sm font-medium">
+            <label htmlFor={`${fieldId}-notes`} className="mb-1 block text-sm font-medium">
               Notes (optional)
             </label>
             <textarea
+              id={`${fieldId}-notes`}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
@@ -585,7 +599,7 @@ export default function TripFormModal({
           {/* Route preview (geocoded) */}
           <div>
             <div className="mb-1 flex items-center justify-between">
-              <label className="text-sm font-medium">Route preview</label>
+              <span className="text-sm font-medium">Route preview</span>
               <button
                 type="button"
                 onClick={() =>

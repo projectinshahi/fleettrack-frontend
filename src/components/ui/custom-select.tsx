@@ -211,7 +211,7 @@ export default function CustomSelect({
     return (
       <span
         className={cn(
-          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase border",
+          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold uppercase border",
           STATUS_CHIP[tone]
         )}
       >
@@ -250,11 +250,13 @@ export default function CustomSelect({
             setHighlightedIndex(0);
           }}
           placeholder="Search items..."
+          aria-label="Search options"
           className="h-10 w-full rounded-lg border border-input bg-background pl-10 pr-8 text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring"
         />
         {search && (
           <button
             onClick={() => setSearch("")}
+            aria-label="Clear search"
             className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
           >
             <X className="h-3.5 w-3.5" />
@@ -282,11 +284,15 @@ export default function CustomSelect({
                   setIsOpen(false);
                   triggerRef.current?.focus();
                 }}
+                // Selected = accent fill (plus the check); keyboard-highlighted = an inset
+                // border-strong edge, which stays 3:1 on the popover in both themes where the
+                // fill alone did not in dark. Hover gets the fill, like the dropdown menu.
                 className={cn(
                   "flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-[15px] transition-colors outline-none",
                   isHighlighted || isSelected
                     ? "bg-accent text-accent-foreground font-semibold"
-                    : "hover:bg-muted/50 text-foreground"
+                    : "hover:bg-accent text-foreground",
+                  isHighlighted && "ring-1 ring-inset ring-border-strong"
                 )}
               >
                 <div className="flex items-center gap-2 min-w-0">
@@ -321,6 +327,7 @@ export default function CustomSelect({
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         onKeyDown={handleKeyDown}
+        aria-expanded={isOpen}
         className={cn(
           "flex h-11 w-full items-center justify-between rounded-lg border border-input bg-card px-4 text-[16px] font-medium outline-none transition-colors hover:bg-muted/40 cursor-pointer select-none focus:border-ring focus:ring-2 focus:ring-ring",
           isOpen && "border-ring ring-2 ring-ring",

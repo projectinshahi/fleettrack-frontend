@@ -53,8 +53,8 @@ export default function DriverReportPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-primary/10 p-3">
-            <Users className="h-6 w-6 text-primary" />
+          <div className="rounded-lg border border-border bg-card p-3">
+            <Users className="h-6 w-6 text-muted-foreground" />
           </div>
           <div>
             <h1 className="page-title">Driver Report</h1>
@@ -82,6 +82,7 @@ export default function DriverReportPage() {
           </label>
           <input
             type="date"
+            aria-label="From"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
             className={inputClass}
@@ -91,6 +92,7 @@ export default function DriverReportPage() {
           <label className="text-xs font-medium text-muted-foreground">To</label>
           <input
             type="date"
+            aria-label="To"
             value={to}
             onChange={(e) => setTo(e.target.value)}
             className={inputClass}
@@ -111,7 +113,7 @@ export default function DriverReportPage() {
             key={card.label}
             className="rounded-lg border border-border bg-card p-4"
           >
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               {card.label}
             </p>
             <p className="mt-1 text-2xl font-semibold tabular-nums">
